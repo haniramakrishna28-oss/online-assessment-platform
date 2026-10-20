@@ -147,8 +147,8 @@ export default function Navbar() {
                 <FileText size={15} /> Exam Manager
               </Link>
 
-              <span 
-                title="Module 7: Results & Evaluation"
+              <Link 
+                to="/admin/results" 
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -156,12 +156,16 @@ export default function Navbar() {
                   padding: '0.45rem 0.85rem',
                   borderRadius: '8px',
                   fontSize: '0.85rem',
-                  color: 'var(--text-muted)',
-                  cursor: 'default'
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  color: isActive('/admin/results') ? '#ffffff' : 'var(--text-secondary)',
+                  background: isActive('/admin/results') ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
+                  border: isActive('/admin/results') ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid transparent',
+                  transition: 'all 0.2s ease'
                 }}
               >
-                <Award size={15} /> Results <span className="badge" style={{ fontSize: '0.65rem', background: 'rgba(255,255,255,0.06)' }}>M7</span>
-              </span>
+                <Award size={15} /> Exam Results
+              </Link>
             </>
           ) : (
             <>
@@ -204,22 +208,6 @@ export default function Navbar() {
               >
                 <FileText size={15} /> Available Exams
               </Link>
-
-              <span 
-                title="Module 7: My Results"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '8px',
-                  fontSize: '0.85rem',
-                  color: 'var(--text-muted)',
-                  cursor: 'default'
-                }}
-              >
-                <Award size={15} /> My Results <span className="badge" style={{ fontSize: '0.65rem', background: 'rgba(255,255,255,0.06)' }}>M7</span>
-              </span>
             </>
           )}
         </div>

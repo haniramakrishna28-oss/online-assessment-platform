@@ -9,6 +9,9 @@ import QuestionBankPage from './pages/QuestionBankPage';
 import ExamManagementPage from './pages/ExamManagementPage';
 import StudentDashboard from './pages/StudentDashboard';
 import AvailableExamsPage from './pages/AvailableExamsPage';
+import ExamTakingPage from './pages/ExamTakingPage';
+import ExamResultPage from './pages/ExamResultPage';
+import AdminResultsPage from './pages/AdminResultsPage';
 import { AlertCircle } from 'lucide-react';
 
 function RootRedirect() {
@@ -102,6 +105,15 @@ export default function App() {
             } 
           />
 
+          <Route 
+            path="/admin/results" 
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN']}>
+                <AdminResultsPage />
+              </ProtectedRoute>
+            } 
+          />
+
           {/* Role-Protected Student Routes */}
           <Route 
             path="/student/dashboard" 
@@ -117,6 +129,26 @@ export default function App() {
             element={
               <ProtectedRoute allowedRoles={['STUDENT']}>
                 <AvailableExamsPage />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Examination Taking Environment */}
+          <Route 
+            path="/exam/:id" 
+            element={
+              <ProtectedRoute allowedRoles={['STUDENT']}>
+                <ExamTakingPage />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Exam Result / Scorecard (Accessible to Students & Admins) */}
+          <Route 
+            path="/results/:id" 
+            element={
+              <ProtectedRoute allowedRoles={['STUDENT', 'ADMIN']}>
+                <ExamResultPage />
               </ProtectedRoute>
             } 
           />

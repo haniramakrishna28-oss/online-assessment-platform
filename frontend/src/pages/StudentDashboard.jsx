@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
@@ -15,15 +15,44 @@ import {
   ArrowRight,
   BookOpen,
   Calendar,
-  Lock
+  Lock,
+  Eye,
+  Loader2,
+  XCircle
 } from 'lucide-react';
 
 export default function StudentDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const [results, setResults] = useState([]);
+  const [loadingResults, setLoadingResults] = useState(true);
+  const [availableCount, setAvailableCount] = useState(0);
+
   const [studentCheckResult, setStudentCheckResult] = useState(null);
   const [testingStudent, setTestingStudent] = useState(false);
   const [adminRouteTestResult, setAdminRouteTestResult] = useState(null);
   const [testingAdminRoute, setTestingAdminRoute] = useState(false);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      setLoadingResults(true);
+      try {
+        const [resResults, resExams] = await Promise.all([
+          api.get('/results/my_results/'),
+          api.get('/exams/available/')
+        ]);
+        setResults(resResults.data);
+        setAvailableCount(resExams.data.length);
+      } catch (err) {
+        console.error('Failed to load student dashboard data:', err);
+      } finally {
+        setLoadingResults(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   const testStudentAccess = async () => {
     setTestingStudent(true);
@@ -58,8 +87,14 @@ export default function StudentDashboard() {
     }
   };
 
+  const completedCount = results.length;
+  const passedCount = results.filter((r) => r.passed).length;
+  const avgPercentage = completedCount > 0
+    ? Math.round(results.reduce((acc, curr) => acc + Number(curr.percentage || 0), 0) / completedCount)
+    : 0;
+
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-main)' }}>
       <Navbar />
 
       <main style={{ flexGrow: 1, padding: '2rem 1.5rem', maxWidth: '1280px', margin: '0 auto', width: '100%' }}>
@@ -82,13 +117,13 @@ export default function StudentDashboard() {
             Welcome, {user?.first_name ? `${user.first_name} (${user.username})` : user?.username}!
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '650px' }}>
-            Ready to test your knowledge? View published examinations, begin timed tests, and inspect your automated results.
+            Ready to test your knowledge? View available examinations, begin timed tests with PostgreSQL autosave, and inspect your automated results.
           </p>
         </div>
 
         {/* Metrics Row */}
         <section style={{ marginBottom: '2.5rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
             <Link to="/student/exams" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="glass-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
@@ -96,12 +131,14 @@ export default function StudentDashboard() {
                     <BookOpen size={22} style={{ color: '#60a5fa' }} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Assigned Exams</div>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--accent-primary)' }}>View Available Exams &rarr;</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Available Exams</div>
+                    <div style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--accent-primary)' }}>
+                      {availableCount} Published &rarr;
+                    </div>
                   </div>
                 </div>
                 <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                  Browse published examinations ready for your attempt.
+                  Browse active examinations ready for your attempt.
                 </p>
               </div>
             </Link>
@@ -112,12 +149,12 @@ export default function StudentDashboard() {
                   <Award size={22} style={{ color: '#34d399' }} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Attempt History</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 800 }}>0 Completed</div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Exams Completed</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 800 }}>{completedCount} Completed</div>
                 </div>
               </div>
               <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                Your scores and performance breakdown will sync here.
+                {passedCount} passed with {avgPercentage}% average score.
               </p>
             </div>
 
@@ -135,6 +172,107 @@ export default function StudentDashboard() {
                 PostgreSQL autosave and timer synchronization enabled.
               </p>
             </div>
+          </div>
+        </section>
+
+        {/* My Recent Results Section */}
+        <section style={{ marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+            <h2 style={{ fontSize: '1.3rem', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Award size={20} style={{ color: 'var(--primary)' }} /> My Examination Results & Scorecards
+            </h2>
+            <Link to="/student/exams" className="btn btn-secondary" style={{ fontSize: '0.85rem' }}>
+              Take an Exam &rarr;
+            </Link>
+          </div>
+
+          <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+            {loadingResults ? (
+              <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                <Loader2 size={32} className="spin-animation" style={{ color: 'var(--primary)', margin: '0 auto 0.75rem auto' }} />
+                <p>Loading your past exam results...</p>
+              </div>
+            ) : results.length === 0 ? (
+              <div style={{ padding: '3rem 2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                <Award size={40} style={{ margin: '0 auto 0.75rem auto', opacity: 0.5 }} />
+                <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
+                  No Exam Attempts Yet
+                </h3>
+                <p style={{ fontSize: '0.875rem', marginBottom: '1.25rem' }}>
+                  You have not submitted any examinations yet. Browse available exams to begin your first test!
+                </p>
+                <Link to="/student/exams" className="btn btn-primary">
+                  Browse Available Exams
+                </Link>
+              </div>
+            ) : (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                  <thead>
+                    <tr style={{
+                      background: 'rgba(30, 41, 59, 0.5)',
+                      borderBottom: '1px solid var(--border-color)',
+                      fontSize: '0.8rem',
+                      textTransform: 'uppercase',
+                      color: 'var(--text-secondary)'
+                    }}>
+                      <th style={{ padding: '0.85rem 1.25rem' }}>Exam</th>
+                      <th style={{ padding: '0.85rem 1.25rem' }}>Subject</th>
+                      <th style={{ padding: '0.85rem 1.25rem' }}>Score</th>
+                      <th style={{ padding: '0.85rem 1.25rem' }}>Percentage</th>
+                      <th style={{ padding: '0.85rem 1.25rem' }}>Outcome</th>
+                      <th style={{ padding: '0.85rem 1.25rem' }}>Submitted</th>
+                      <th style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody style={{ fontSize: '0.9rem' }}>
+                    {results.map((r) => (
+                      <tr key={r.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                        <td style={{ padding: '0.85rem 1.25rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                          {r.exam_title}
+                        </td>
+                        <td style={{ padding: '0.85rem 1.25rem', color: 'var(--text-secondary)' }}>
+                          {r.exam_subject}
+                        </td>
+                        <td style={{ padding: '0.85rem 1.25rem', fontWeight: 700 }}>
+                          {r.score} / {r.total_marks}
+                        </td>
+                        <td style={{
+                          padding: '0.85rem 1.25rem',
+                          fontWeight: 700,
+                          color: r.passed ? 'var(--success)' : 'var(--danger)'
+                        }}>
+                          {r.percentage}%
+                        </td>
+                        <td style={{ padding: '0.85rem 1.25rem' }}>
+                          {r.passed ? (
+                            <span className="badge badge-success" style={{ gap: '0.25rem' }}>
+                              <CheckCircle2 size={12} /> Passed
+                            </span>
+                          ) : (
+                            <span className="badge badge-danger" style={{ gap: '0.25rem' }}>
+                              <XCircle size={12} /> Needs Improvement
+                            </span>
+                          )}
+                        </td>
+                        <td style={{ padding: '0.85rem 1.25rem', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
+                          {new Date(r.submitted_at).toLocaleDateString()}
+                        </td>
+                        <td style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>
+                          <button
+                            className="btn btn-secondary"
+                            style={{ padding: '0.3rem 0.65rem', fontSize: '0.8rem', gap: '0.3rem' }}
+                            onClick={() => navigate(`/results/${r.id}`)}
+                          >
+                            <Eye size={13} /> View Scorecard
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </section>
 

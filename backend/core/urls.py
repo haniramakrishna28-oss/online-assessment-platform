@@ -9,12 +9,16 @@ from .views import (
     admin_check,
     student_check,
     QuestionViewSet,
-    ExamViewSet
+    ExamViewSet,
+    ExamAttemptViewSet,
+    ExamResultViewSet
 )
 
 router = DefaultRouter()
 router.register('questions', QuestionViewSet, basename='questions')
 router.register('exams', ExamViewSet, basename='exams')
+router.register('attempts', ExamAttemptViewSet, basename='attempts')
+router.register('results', ExamResultViewSet, basename='results')
 
 urlpatterns = [
     # Health check
