@@ -8,11 +8,13 @@ from .views import (
     UserProfileView,
     admin_check,
     student_check,
-    QuestionViewSet
+    QuestionViewSet,
+    ExamViewSet
 )
 
 router = DefaultRouter()
 router.register('questions', QuestionViewSet, basename='questions')
+router.register('exams', ExamViewSet, basename='exams')
 
 urlpatterns = [
     # Health check
