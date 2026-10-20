@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.db import connection
 from django.db.models import Q, Count
+from django.utils import timezone
 
 from .models import User, Question, Option, Exam, ExamAttempt, StudentAnswer, ExamResult
 from .serializers import (
@@ -12,9 +13,11 @@ from .serializers import (
     RegisterSerializer, 
     CustomTokenObtainPairSerializer,
     QuestionSerializer,
-    OptionSerializer
+    OptionSerializer,
+    ExamListSerializer,
+    ExamDetailSerializer
 )
-from .permissions import IsAdminUserRole, IsStudentUserRole
+from .permissions import IsAdminUserRole, IsStudentUserRole, IsAdminOrReadOnly
 
 
 @api_view(['GET'])
@@ -174,3 +177,79 @@ class QuestionViewSet(viewsets.ModelViewSet):
             "subjects_count": len(by_subject),
             "by_subject": by_subject
         })
+
+
+class ExamViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for Exam management (Admin CRUD, publish/unpublish)
+    and student availability queries.
+    """
+    queryset = Exam.objects.all().prefetch_related('questions')
+    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'available']:
+            return ExamListSerializer
+        return ExamDetailSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        qs = Exam.objects.all().prefetch_related('questions')
+
+        # If user is student, only return published exams
+        if user.is_authenticated and not (user.role == User.ROLE_ADMIN or user.is_staff or user.is_superuser):
+            qs = qs.filter(is_published=True)
+
+        # Filters for admin
+        status_filter = self.request.query_params.get('status')
+        if status_filter:
+            if status_filter.lower() == 'published':
+                qs = qs.filter(is_published=True)
+            elif status_filter.lower() == 'draft':
+                qs = qs.filter(is_published=False)
+
+        subject = self.request.query_params.get('subject')
+        if subject and subject.strip() and subject.lower() != 'all':
+            qs = qs.filter(subject__iexact=subject.strip())
+
+        search = self.request.query_params.get('search') or self.request.query_params.get('q')
+        if search and search.strip():
+            term = search.strip()
+            qs = qs.filter(Q(title__icontains=term) | Q(subject__icontains=term))
+
+        return qs.order_by('-created_at')
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
+    @action(detail=True, methods=['POST'], permission_classes=[IsAuthenticated, IsAdminUserRole])
+    def publish(self, request, pk=None):
+        """Publish the exam, making it visible to students"""
+        exam = self.get_object()
+        exam.is_published = True
+        exam.save(update_fields=['is_published'])
+        return Response({"message": f"Exam '{exam.title}' published successfully.", "is_published": True})
+
+    @action(detail=True, methods=['POST'], permission_classes=[IsAuthenticated, IsAdminUserRole])
+    def unpublish(self, request, pk=None):
+        """Unpublish the exam (convert back to draft)"""
+        exam = self.get_object()
+        exam.is_published = False
+        exam.save(update_fields=['is_published'])
+        return Response({"message": f"Exam '{exam.title}' converted to draft.", "is_published": False})
+
+    @action(detail=False, methods=['GET'], permission_classes=[IsAuthenticated])
+    def available(self, request):
+        """
+        List all currently available published exams for students.
+        """
+        user = request.user
+        now = timezone.now()
+        qs = Exam.objects.filter(is_published=True)
+
+        # Window filter: start_time <= now or null, end_time >= now or null
+        available_exams = [e for e in qs if e.is_currently_available()]
+
+        serializer = ExamListSerializer(available_exams, many=True, context={'request': request})
+        return Response(serializer.data)
+

@@ -250,3 +250,125 @@ class QuestionSerializer(serializers.ModelSerializer):
                 )
 
         return instance
+
+
+class ExamListSerializer(serializers.ModelSerializer):
+    """
+    Serializer for listing exams with question counts and availability.
+    """
+    questions_count = serializers.IntegerField(source='questions.count', read_only=True)
+    is_available = serializers.SerializerMethodField(read_only=True)
+    attempts_used = serializers.SerializerMethodField(read_only=True)
+    can_attempt = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Exam
+        fields = [
+            'id', 
+            'title', 
+            'description', 
+            'subject', 
+            'duration_minutes',
+            'total_marks', 
+            'passing_marks', 
+            'questions_count',
+            'start_time', 
+            'end_time', 
+            'max_attempts', 
+            'is_published',
+            'is_available', 
+            'attempts_used', 
+            'can_attempt', 
+            'created_at'
+        ]
+
+    def get_is_available(self, obj):
+        return obj.is_currently_available()
+
+    def get_attempts_used(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.attempts.filter(student=request.user).count()
+        return 0
+
+    def get_can_attempt(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            attempts_count = obj.attempts.filter(student=request.user).count()
+            return obj.is_currently_available() and (attempts_count < obj.max_attempts)
+        return False
+
+
+class ExamDetailSerializer(serializers.ModelSerializer):
+    """
+    Full Exam serializer supporting question assignment, total calculation,
+    and availability window validation.
+    """
+    questions = QuestionSerializer(many=True, read_only=True)
+    question_ids = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Question.objects.all(), write_only=True, required=False, source='questions'
+    )
+    questions_count = serializers.IntegerField(source='questions.count', read_only=True)
+    is_available = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Exam
+        fields = [
+            'id', 
+            'title', 
+            'description', 
+            'subject', 
+            'duration_minutes',
+            'total_marks', 
+            'passing_marks', 
+            'questions', 
+            'question_ids',
+            'questions_count', 
+            'start_time', 
+            'end_time', 
+            'max_attempts', 
+            'is_published', 
+            'is_available', 
+            'created_at', 
+            'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at', 'is_available', 'questions_count']
+
+    def validate(self, attrs):
+        start_time = attrs.get('start_time', getattr(self.instance, 'start_time', None))
+        end_time = attrs.get('end_time', getattr(self.instance, 'end_time', None))
+        if start_time and end_time and end_time <= start_time:
+            raise serializers.ValidationError({"end_time": "Exam end time must be after start time."})
+
+        duration = attrs.get('duration_minutes', getattr(self.instance, 'duration_minutes', 30))
+        if duration < 1:
+            raise serializers.ValidationError({"duration_minutes": "Duration must be at least 1 minute."})
+
+        passing = attrs.get('passing_marks', getattr(self.instance, 'passing_marks', 40))
+        total = attrs.get('total_marks', getattr(self.instance, 'total_marks', 100))
+        if passing > total:
+            raise serializers.ValidationError({"passing_marks": "Passing marks cannot exceed total marks."})
+
+        return attrs
+
+    def create(self, validated_data):
+        questions = validated_data.pop('questions', [])
+        if questions and ('total_marks' not in validated_data or validated_data['total_marks'] == 0):
+            validated_data['total_marks'] = sum(q.marks for q in questions)
+        exam = Exam.objects.create(**validated_data)
+        if questions:
+            exam.questions.set(questions)
+        return exam
+
+    def update(self, instance, validated_data):
+        questions = validated_data.pop('questions', None)
+        for attr, val in validated_data.items():
+            setattr(instance, attr, val)
+        instance.save()
+        if questions is not None:
+            instance.questions.set(questions)
+            calculated_total = sum(q.marks for q in instance.questions.all())
+            if calculated_total > 0:
+                instance.total_marks = calculated_total
+                instance.save(update_fields=['total_marks'])
+        return instance
