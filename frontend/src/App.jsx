@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminDashboard from './pages/AdminDashboard';
+import QuestionBankPage from './pages/QuestionBankPage';
 import StudentDashboard from './pages/StudentDashboard';
 import { AlertCircle } from 'lucide-react';
 
@@ -77,6 +78,15 @@ export default function App() {
             element={
               <ProtectedRoute allowedRoles={['ADMIN']}>
                 <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/admin/questions" 
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN']}>
+                <QuestionBankPage />
               </ProtectedRoute>
             } 
           />
