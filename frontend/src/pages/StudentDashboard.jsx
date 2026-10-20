@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
@@ -88,20 +89,22 @@ export default function StudentDashboard() {
         {/* Metrics Row */}
         <section style={{ marginBottom: '2.5rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
-            <div className="glass-card">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <div style={{ background: 'rgba(59, 130, 246, 0.15)', padding: '10px', borderRadius: '12px' }}>
-                  <BookOpen size={22} style={{ color: '#60a5fa' }} />
+            <Link to="/student/exams" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className="glass-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                  <div style={{ background: 'rgba(59, 130, 246, 0.15)', padding: '10px', borderRadius: '12px' }}>
+                    <BookOpen size={22} style={{ color: '#60a5fa' }} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Assigned Exams</div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--accent-primary)' }}>View Available Exams &rarr;</div>
+                  </div>
                 </div>
-                <div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Assigned Exams</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 800 }}>Available Soon</div>
-                </div>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                  Browse published examinations ready for your attempt.
+                </p>
               </div>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                Published exams will appear here in Module 4.
-              </p>
-            </div>
+            </Link>
 
             <div className="glass-card">
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>

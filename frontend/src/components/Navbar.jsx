@@ -127,8 +127,8 @@ export default function Navbar() {
                 <HelpCircle size={15} /> Question Bank
               </Link>
 
-              <span 
-                title="Module 4: Exam Creation & Configuration"
+              <Link 
+                to="/admin/exams" 
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -136,12 +136,16 @@ export default function Navbar() {
                   padding: '0.45rem 0.85rem',
                   borderRadius: '8px',
                   fontSize: '0.85rem',
-                  color: 'var(--text-muted)',
-                  cursor: 'default'
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  color: isActive('/admin/exams') ? '#ffffff' : 'var(--text-secondary)',
+                  background: isActive('/admin/exams') ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
+                  border: isActive('/admin/exams') ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid transparent',
+                  transition: 'all 0.2s ease'
                 }}
               >
-                <FileText size={15} /> Exams <span className="badge" style={{ fontSize: '0.65rem', background: 'rgba(255,255,255,0.06)' }}>M4</span>
-              </span>
+                <FileText size={15} /> Exam Manager
+              </Link>
 
               <span 
                 title="Module 7: Results & Evaluation"
@@ -181,8 +185,8 @@ export default function Navbar() {
                 <LayoutDashboard size={15} /> Dashboard
               </Link>
 
-              <span 
-                title="Module 4/5: Available Exams"
+              <Link 
+                to="/student/exams" 
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -190,12 +194,16 @@ export default function Navbar() {
                   padding: '0.45rem 0.85rem',
                   borderRadius: '8px',
                   fontSize: '0.85rem',
-                  color: 'var(--text-muted)',
-                  cursor: 'default'
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  color: isActive('/student/exams') ? '#ffffff' : 'var(--text-secondary)',
+                  background: isActive('/student/exams') ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
+                  border: isActive('/student/exams') ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid transparent',
+                  transition: 'all 0.2s ease'
                 }}
               >
-                <FileText size={15} /> Available Exams <span className="badge" style={{ fontSize: '0.65rem', background: 'rgba(255,255,255,0.06)' }}>M4</span>
-              </span>
+                <FileText size={15} /> Available Exams
+              </Link>
 
               <span 
                 title="Module 7: My Results"

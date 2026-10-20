@@ -6,7 +6,9 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminDashboard from './pages/AdminDashboard';
 import QuestionBankPage from './pages/QuestionBankPage';
+import ExamManagementPage from './pages/ExamManagementPage';
 import StudentDashboard from './pages/StudentDashboard';
+import AvailableExamsPage from './pages/AvailableExamsPage';
 import { AlertCircle } from 'lucide-react';
 
 function RootRedirect() {
@@ -91,12 +93,30 @@ export default function App() {
             } 
           />
 
+          <Route 
+            path="/admin/exams" 
+            element={
+              <ProtectedRoute allowedRoles={['ADMIN']}>
+                <ExamManagementPage />
+              </ProtectedRoute>
+            } 
+          />
+
           {/* Role-Protected Student Routes */}
           <Route 
             path="/student/dashboard" 
             element={
               <ProtectedRoute allowedRoles={['STUDENT']}>
                 <StudentDashboard />
+              </ProtectedRoute>
+            } 
+          />
+
+          <Route 
+            path="/student/exams" 
+            element={
+              <ProtectedRoute allowedRoles={['STUDENT']}>
+                <AvailableExamsPage />
               </ProtectedRoute>
             } 
           />
