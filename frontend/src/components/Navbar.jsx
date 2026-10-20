@@ -107,8 +107,8 @@ export default function Navbar() {
                 <LayoutDashboard size={15} /> Dashboard
               </Link>
 
-              <span 
-                title="Module 3: Question Bank Management"
+              <Link 
+                to="/admin/questions" 
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -116,12 +116,16 @@ export default function Navbar() {
                   padding: '0.45rem 0.85rem',
                   borderRadius: '8px',
                   fontSize: '0.85rem',
-                  color: 'var(--text-muted)',
-                  cursor: 'default'
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  color: isActive('/admin/questions') ? '#ffffff' : 'var(--text-secondary)',
+                  background: isActive('/admin/questions') ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
+                  border: isActive('/admin/questions') ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid transparent',
+                  transition: 'all 0.2s ease'
                 }}
               >
-                <HelpCircle size={15} /> Questions <span className="badge" style={{ fontSize: '0.65rem', background: 'rgba(255,255,255,0.06)' }}>M3</span>
-              </span>
+                <HelpCircle size={15} /> Question Bank
+              </Link>
 
               <span 
                 title="Module 4: Exam Creation & Configuration"

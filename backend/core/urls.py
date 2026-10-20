@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
     api_status,
@@ -6,8 +7,12 @@ from .views import (
     CustomTokenObtainPairView,
     UserProfileView,
     admin_check,
-    student_check
+    student_check,
+    QuestionViewSet
 )
+
+router = DefaultRouter()
+router.register('questions', QuestionViewSet, basename='questions')
 
 urlpatterns = [
     # Health check
@@ -22,4 +27,7 @@ urlpatterns = [
     # Role validation endpoints
     path('auth/admin-check/', admin_check, name='auth-admin-check'),
     path('auth/student-check/', student_check, name='auth-student-check'),
+
+    # Router endpoints (Question Bank)
+    path('', include(router.urls)),
 ]

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
@@ -120,9 +121,14 @@ export default function AdminDashboard() {
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
                 Create, update, and categorize MCQ & True/False questions by subject, difficulty, and marks.
               </p>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <Sparkles size={13} style={{ color: 'var(--accent-primary)' }} /> Next implementation phase
-              </div>
+              <Link
+                to="/admin/questions"
+                className="btn btn-secondary"
+                style={{ width: '100%', fontSize: '0.85rem', padding: '0.5rem', justifyContent: 'space-between' }}
+              >
+                <span>Manage Questions</span>
+                <ArrowRight size={15} />
+              </Link>
             </div>
 
             {/* Exam Management (Module 4) */}

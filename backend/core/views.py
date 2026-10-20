@@ -1,15 +1,18 @@
-from rest_framework import generics, status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework import generics, status, viewsets
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.db import connection
+from django.db.models import Q, Count
 
-from .models import User
+from .models import User, Question, Option, Exam, ExamAttempt, StudentAnswer, ExamResult
 from .serializers import (
     UserSerializer, 
     RegisterSerializer, 
-    CustomTokenObtainPairSerializer
+    CustomTokenObtainPairSerializer,
+    QuestionSerializer,
+    OptionSerializer
 )
 from .permissions import IsAdminUserRole, IsStudentUserRole
 
@@ -99,3 +102,75 @@ def student_check(request):
         "username": request.user.username,
         "message": "Authorization confirmed: Student access granted."
     })
+
+
+class QuestionViewSet(viewsets.ModelViewSet):
+    """
+    CRUD ViewSet for Question Bank management (Admin only).
+    Includes filtering by subject, difficulty, type, and keyword search.
+    """
+    queryset = Question.objects.all().prefetch_related('options')
+    serializer_class = QuestionSerializer
+    permission_classes = [IsAuthenticated, IsAdminUserRole]
+
+    def get_queryset(self):
+        qs = Question.objects.all().prefetch_related('options')
+        
+        # Filter by subject
+        subject = self.request.query_params.get('subject')
+        if subject and subject.strip() and subject.lower() != 'all':
+            qs = qs.filter(subject__iexact=subject.strip())
+
+        # Filter by difficulty
+        difficulty = self.request.query_params.get('difficulty')
+        if difficulty and difficulty.strip() and difficulty.upper() != 'ALL':
+            qs = qs.filter(difficulty=difficulty.strip().upper())
+
+        # Filter by question type
+        question_type = self.request.query_params.get('question_type')
+        if question_type and question_type.strip() and question_type.upper() != 'ALL':
+            qs = qs.filter(question_type=question_type.strip().upper())
+
+        # Search by keyword in question_text or subject
+        search = self.request.query_params.get('search') or self.request.query_params.get('q')
+        if search and search.strip():
+            term = search.strip()
+            qs = qs.filter(
+                Q(question_text__icontains=term) | 
+                Q(subject__icontains=term)
+            )
+
+        return qs.order_by('-id')
+
+    @action(detail=False, methods=['GET'])
+    def subjects(self, request):
+        """
+        Returns list of all distinct subjects present in the question bank.
+        """
+        subjects = list(
+            Question.objects.values_list('subject', flat=True)
+            .distinct()
+            .order_by('subject')
+        )
+        return Response({"subjects": subjects})
+
+    @action(detail=False, methods=['GET'])
+    def stats(self, request):
+        """
+        Returns statistical summary of the Question Bank.
+        """
+        total = Question.objects.count()
+        by_difficulty = dict(Question.objects.values('difficulty').annotate(c=Count('id')).values_list('difficulty', 'c'))
+        by_type = dict(Question.objects.values('question_type').annotate(c=Count('id')).values_list('question_type', 'c'))
+        by_subject = dict(Question.objects.values('subject').annotate(c=Count('id')).values_list('subject', 'c'))
+
+        return Response({
+            "total_questions": total,
+            "easy": by_difficulty.get('EASY', 0),
+            "medium": by_difficulty.get('MEDIUM', 0),
+            "hard": by_difficulty.get('HARD', 0),
+            "mcq": by_type.get('MCQ', 0),
+            "tf": by_type.get('TF', 0),
+            "subjects_count": len(by_subject),
+            "by_subject": by_subject
+        })
