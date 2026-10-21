@@ -276,10 +276,11 @@ export default function ExamTakingPage() {
         position: 'sticky',
         top: 0,
         zIndex: 50,
-        background: 'rgba(15, 23, 42, 0.95)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid var(--border-color)',
-        padding: '0.75rem 1.5rem',
+        background: 'var(--portal-gradient)',
+        color: '#ffffff',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+        padding: '0.85rem 1.5rem',
+        boxShadow: '0 4px 20px rgba(79, 70, 229, 0.25)'
       }}>
         <div style={{
           maxWidth: '1440px',
@@ -293,14 +294,31 @@ export default function ExamTakingPage() {
           {/* Exam info */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem' }}>
-              <span className="badge badge-primary">
+              <span style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                color: '#ffffff',
+                padding: '2px 8px',
+                borderRadius: '9999px',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}>
                 <BookOpen size={12} /> {attemptData?.exam_subject || 'Assessment'}
               </span>
-              <span className="badge badge-info">
+              <span style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                color: '#ffffff',
+                padding: '2px 8px',
+                borderRadius: '9999px',
+                fontSize: '0.75rem',
+                fontWeight: 700
+              }}>
                 Attempt #{attemptData?.attempt_number}
               </span>
             </div>
-            <h1 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+            <h1 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
               {attemptData?.exam_title}
             </h1>
           </div>
@@ -311,35 +329,38 @@ export default function ExamTakingPage() {
             alignItems: 'center',
             gap: '0.5rem',
             fontSize: '0.825rem',
-            padding: '0.4rem 0.8rem',
-            background: 'rgba(30, 41, 59, 0.7)',
+            padding: '0.45rem 0.9rem',
+            background: 'rgba(255, 255, 255, 0.18)',
+            backdropFilter: 'blur(8px)',
             borderRadius: '9999px',
-            border: '1px solid var(--border-color)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
+            color: '#ffffff',
+            fontWeight: 600
           }}>
             {saveStatus === 'saving' && (
               <>
-                <Loader2 size={14} className="spin-animation" style={{ color: 'var(--primary)' }} />
-                <span style={{ color: 'var(--primary)' }}>Autosaving to PostgreSQL...</span>
+                <Loader2 size={14} className="spin-animation" style={{ color: '#ffffff' }} />
+                <span>Autosaving to PostgreSQL...</span>
               </>
             )}
             {saveStatus === 'saved' && (
               <>
-                <CheckCircle2 size={14} style={{ color: 'var(--success)' }} />
-                <span style={{ color: 'var(--success)' }}>
+                <CheckCircle2 size={14} style={{ color: '#6ee7b7' }} />
+                <span>
                   All answers saved {lastSavedTime ? `at ${lastSavedTime}` : ''}
                 </span>
               </>
             )}
             {saveStatus === 'error' && (
               <>
-                <AlertTriangle size={14} style={{ color: 'var(--danger)' }} />
-                <span style={{ color: 'var(--danger)' }}>Autosave connection error</span>
+                <AlertTriangle size={14} style={{ color: '#fca5a5' }} />
+                <span>Autosave connection error</span>
               </>
             )}
             {saveStatus === 'idle' && (
               <>
-                <CheckCircle2 size={14} style={{ color: 'var(--text-secondary)' }} />
-                <span style={{ color: 'var(--text-secondary)' }}>PostgreSQL Autosave Active</span>
+                <CheckCircle2 size={14} style={{ color: 'rgba(255, 255, 255, 0.8)' }} />
+                <span>PostgreSQL Autosave Active</span>
               </>
             )}
           </div>
@@ -351,22 +372,17 @@ export default function ExamTakingPage() {
               alignItems: 'center',
               gap: '0.5rem',
               padding: '0.5rem 1rem',
-              borderRadius: '8px',
-              fontWeight: 700,
+              borderRadius: '9999px',
+              fontWeight: 800,
               fontSize: '1.15rem',
               letterSpacing: '0.05em',
               background: isCriticalTime
-                ? 'rgba(239, 68, 68, 0.2)'
+                ? '#fef2f2'
                 : isLowTime
-                ? 'rgba(245, 158, 11, 0.2)'
-                : 'rgba(59, 130, 246, 0.15)',
-              border: isCriticalTime
-                ? '1px solid var(--danger)'
-                : isLowTime
-                ? '1px solid var(--warning)'
-                : '1px solid var(--primary)',
-              color: isCriticalTime ? 'var(--danger)' : isLowTime ? 'var(--warning)' : '#60a5fa',
-              boxShadow: isCriticalTime ? '0 0 12px rgba(239, 68, 68, 0.4)' : 'none',
+                ? '#fffbeb'
+                : '#ffffff',
+              color: isCriticalTime ? 'var(--danger)' : isLowTime ? 'var(--warning)' : 'var(--primary)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
               animation: isCriticalTime ? 'pulse 1s infinite' : 'none'
             }}>
               <Clock size={18} />
@@ -374,8 +390,17 @@ export default function ExamTakingPage() {
             </div>
 
             <button
-              className="btn btn-primary"
-              style={{ padding: '0.55rem 1.1rem', fontSize: '0.9rem' }}
+              className="btn btn-secondary"
+              style={{
+                padding: '0.55rem 1.15rem',
+                fontSize: '0.9rem',
+                borderRadius: '9999px',
+                fontWeight: 700,
+                background: '#ffffff',
+                color: 'var(--primary)',
+                border: 'none',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+              }}
               onClick={() => setShowSubmitModal(true)}
               disabled={submitting}
             >
@@ -473,9 +498,9 @@ export default function ExamTakingPage() {
                         padding: '1rem 1.25rem',
                         borderRadius: '10px',
                         cursor: 'pointer',
-                        background: isSelected ? 'rgba(99, 102, 241, 0.12)' : 'rgba(30, 41, 59, 0.4)',
-                        border: isSelected ? '2px solid var(--primary)' : '1px solid var(--border-color)',
-                        boxShadow: isSelected ? '0 0 16px rgba(99, 102, 241, 0.25)' : 'none',
+                        background: isSelected ? '#eef2ff' : '#f8fafc',
+                        border: isSelected ? '2px solid var(--primary)' : '1px solid #e2e8f0',
+                        boxShadow: isSelected ? '0 4px 14px rgba(79, 70, 229, 0.15)' : 'none',
                         transition: 'all 0.15s ease',
                       }}
                     >
@@ -497,8 +522,8 @@ export default function ExamTakingPage() {
                         fontSize: '0.9rem',
                         fontWeight: 700,
                         flexShrink: 0,
-                        background: isSelected ? 'var(--primary)' : 'rgba(255,255,255,0.06)',
-                        color: isSelected ? '#ffffff' : 'var(--text-secondary)',
+                        background: isSelected ? 'var(--primary)' : '#e2e8f0',
+                        color: isSelected ? '#ffffff' : 'var(--text-primary)',
                         transition: 'all 0.15s ease'
                       }}>
                         {optionLabel}
@@ -654,20 +679,20 @@ export default function ExamTakingPage() {
                 const isAnswered = Boolean(answers[q.id]);
                 const isFlagged = Boolean(flagged[q.id]);
 
-                let bg = 'rgba(30, 41, 59, 0.6)';
-                let border = '1px solid var(--border-color)';
+                let bg = '#f8fafc';
+                let border = '1px solid #e2e8f0';
                 let color = 'var(--text-secondary)';
 
                 if (isCurrent) {
                   border = '2px solid var(--primary)';
                   color = '#ffffff';
-                  bg = 'rgba(99, 102, 241, 0.3)';
+                  bg = 'var(--primary)';
                 } else if (isFlagged) {
-                  bg = 'rgba(245, 158, 11, 0.2)';
+                  bg = 'var(--pastel-peach)';
                   border = '1px solid var(--warning)';
                   color = 'var(--warning)';
                 } else if (isAnswered) {
-                  bg = 'rgba(16, 185, 129, 0.2)';
+                  bg = 'var(--pastel-mint)';
                   border = '1px solid var(--success)';
                   color = 'var(--success)';
                 }

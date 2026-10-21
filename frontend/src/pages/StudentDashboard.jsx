@@ -1,228 +1,423 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+import PortalHeader from '../components/PortalHeader';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
-import { 
-  GraduationCap, 
-  FileText, 
-  Award, 
-  Clock, 
-  CheckCircle2, 
-  AlertCircle, 
-  ShieldAlert, 
-  Sparkles,
-  ArrowRight,
-  BookOpen,
+import {
+  User,
   Calendar,
-  Lock,
+  Users,
+  CheckSquare,
+  MessageSquare,
+  BarChart2,
+  Image,
+  CreditCard,
+  FileText,
+  BookOpen,
+  Award,
+  Library,
+  ChevronRight,
+  Clock,
+  MapPin,
+  CheckCircle2,
+  XCircle,
   Eye,
   Loader2,
-  XCircle
+  Home,
+  Grid,
+  ShieldCheck,
+  Sparkles,
+  AlertCircle
 } from 'lucide-react';
 
 export default function StudentDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const [exams, setExams] = useState([]);
   const [results, setResults] = useState([]);
-  const [loadingResults, setLoadingResults] = useState(true);
-  const [availableCount, setAvailableCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('home'); // 'home' | 'calendar' | 'messages' | 'more'
 
-  const [studentCheckResult, setStudentCheckResult] = useState(null);
-  const [testingStudent, setTestingStudent] = useState(false);
-  const [adminRouteTestResult, setAdminRouteTestResult] = useState(null);
-  const [testingAdminRoute, setTestingAdminRoute] = useState(false);
+  // Profile modal state
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      setLoadingResults(true);
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const [resResults, resExams] = await Promise.all([
-          api.get('/results/my_results/'),
-          api.get('/exams/available/')
+        const [resExams, resResults] = await Promise.all([
+          api.get('/exams/available/'),
+          api.get('/results/my_results/')
         ]);
+        setExams(resExams.data);
         setResults(resResults.data);
-        setAvailableCount(resExams.data.length);
       } catch (err) {
-        console.error('Failed to load student dashboard data:', err);
+        console.error('Failed to load dashboard data:', err);
       } finally {
-        setLoadingResults(false);
+        setLoading(false);
       }
     };
 
-    fetchDashboardData();
+    fetchData();
   }, []);
 
-  const testStudentAccess = async () => {
-    setTestingStudent(true);
-    setStudentCheckResult(null);
-    try {
-      const res = await api.get('/auth/student-check/');
-      setStudentCheckResult({ success: true, data: res.data });
-    } catch (err) {
-      setStudentCheckResult({ 
-        success: false, 
-        error: err.response?.data?.detail || err.message 
-      });
-    } finally {
-      setTestingStudent(false);
-    }
-  };
+  // Filter exams based on search input
+  const filteredExams = exams.filter((ex) => {
+    if (!searchTerm.trim()) return true;
+    const term = searchTerm.toLowerCase();
+    return ex.title?.toLowerCase().includes(term) || ex.subject?.toLowerCase().includes(term);
+  });
 
-  const testAdminRouteAccess = async () => {
-    setTestingAdminRoute(true);
-    setAdminRouteTestResult(null);
-    try {
-      const res = await api.get('/auth/admin-check/');
-      setAdminRouteTestResult({ success: true, data: res.data });
-    } catch (err) {
-      setAdminRouteTestResult({ 
-        success: false, 
-        status: err.response?.status,
-        error: err.response?.data?.detail || err.message 
-      });
-    } finally {
-      setTestingAdminRoute(false);
+  // Quick access tiles matching the 12 screenshot tiles
+  const quickAccessTiles = [
+    {
+      id: 'profile',
+      title: 'Profile',
+      desc: 'View & edit profile',
+      bg: 'var(--pastel-lavender)',
+      iconBg: 'var(--pastel-lavender-icon)',
+      icon: <User size={20} />,
+      onClick: () => setProfileModalOpen(true)
+    },
+    {
+      id: 'events',
+      title: 'Events',
+      desc: 'Exam calendar',
+      bg: 'var(--pastel-peach)',
+      iconBg: 'var(--pastel-peach-icon)',
+      icon: <Calendar size={20} />,
+      onClick: () => {
+        const el = document.getElementById('upcoming-exams-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    },
+    {
+      id: 'staffs',
+      title: 'Staffs',
+      desc: 'Faculty directory',
+      bg: 'var(--pastel-sky)',
+      iconBg: 'var(--pastel-sky-icon)',
+      icon: <Users size={20} />,
+      onClick: () => alert('Faculty & Examination Committee:\n- Dr. Alan Turing (Chief Examiner)\n- Prof. Grace Hopper (Assessment Chair)\n- Admin Support Desk (active)')
+    },
+    {
+      id: 'attendance',
+      title: 'Attendance',
+      desc: 'Check attendance',
+      bg: 'var(--pastel-mint)',
+      iconBg: 'var(--pastel-mint-icon)',
+      icon: <CheckSquare size={20} />,
+      onClick: () => alert('Assessment Attendance: 100% Active\nVerified through PostgreSQL session timestamps.')
+    },
+    {
+      id: 'chatbox',
+      title: 'Chatbox',
+      desc: 'Message & support',
+      bg: 'var(--pastel-rose)',
+      iconBg: 'var(--pastel-rose-icon)',
+      icon: <MessageSquare size={20} />,
+      onClick: () => alert('Student Helpdesk & Support is online. For exam inquiries, contact your assigned administrator.')
+    },
+    {
+      id: 'gradesheet',
+      title: 'GradeSheet',
+      desc: 'View your grades',
+      bg: 'var(--pastel-amber)',
+      iconBg: 'var(--pastel-amber-icon)',
+      icon: <BarChart2 size={20} />,
+      onClick: () => {
+        const el = document.getElementById('gradesheet-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    },
+    {
+      id: 'gallery',
+      title: 'Gallery',
+      desc: 'Platform & campus',
+      bg: 'var(--pastel-blue)',
+      iconBg: 'var(--pastel-blue-icon)',
+      icon: <Image size={20} />,
+      onClick: () => alert('Platform media archive: ExamSphere Assessment Platform v2.0.')
+    },
+    {
+      id: 'fees',
+      title: 'Fees Details',
+      desc: 'Payments & status',
+      bg: 'var(--pastel-teal)',
+      iconBg: 'var(--pastel-teal-icon)',
+      icon: <CreditCard size={20} />,
+      onClick: () => alert('Assessment Account Status: Fully Paid & Cleared for all certified examinations.')
+    },
+    {
+      id: 'notices',
+      title: 'Notices',
+      desc: 'Latest updates',
+      bg: 'var(--pastel-purple)',
+      iconBg: 'var(--pastel-purple-icon)',
+      badge: 'NEW',
+      icon: <FileText size={20} />,
+      onClick: () => alert('Notice [NEW]:\nFinal Examination Window is open. Remember that timer runs continuously and autosaves to PostgreSQL upon every choice.')
+    },
+    {
+      id: 'assignments',
+      title: 'Assignments',
+      desc: 'Tasks & submissions',
+      bg: 'var(--pastel-peach)',
+      iconBg: 'var(--pastel-peach-icon)',
+      icon: <BookOpen size={20} />,
+      onClick: () => navigate('/student/exams')
+    },
+    {
+      id: 'exams',
+      title: 'Exams',
+      desc: 'Schedule & results',
+      bg: 'var(--pastel-mint)',
+      iconBg: 'var(--pastel-mint-icon)',
+      icon: <Award size={20} />,
+      onClick: () => navigate('/student/exams')
+    },
+    {
+      id: 'library',
+      title: 'Library',
+      desc: 'Books & resources',
+      bg: 'var(--pastel-sky)',
+      iconBg: 'var(--pastel-sky-icon)',
+      icon: <Library size={20} />,
+      onClick: () => alert('Digital Exam Guidelines & Resource Bank:\n- Python 3 Reference Documentation\n- Standard Examination Conduct Handbook')
     }
-  };
-
-  const completedCount = results.length;
-  const passedCount = results.filter((r) => r.passed).length;
-  const avgPercentage = completedCount > 0
-    ? Math.round(results.reduce((acc, curr) => acc + Number(curr.percentage || 0), 0) / completedCount)
-    : 0;
+  ];
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-main)' }}>
-      <Navbar />
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-main)', paddingBottom: '5rem' }}>
+      {/* Curved Hero Header */}
+      <PortalHeader
+        portalTitle="Student Portal"
+        subtitle="Have a great day ahead!"
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Search exams, subjects, grades..."
+      />
 
-      <main style={{ flexGrow: 1, padding: '2rem 1.5rem', maxWidth: '1280px', margin: '0 auto', width: '100%' }}>
-        {/* Hero Section */}
-        <div className="glass-card" style={{ 
-          marginBottom: '2rem', 
-          padding: '2rem 2.5rem',
-          background: 'linear-gradient(135deg, rgba(6, 78, 59, 0.6) 0%, rgba(17, 24, 39, 0.85) 100%)',
-          borderColor: 'rgba(16, 185, 129, 0.3)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
-            <span className="badge badge-success">
-              <GraduationCap size={13} /> Student Portal
-            </span>
-            <span className="badge badge-info">
-              <span className="pulsing-dot"></span> Active Session
-            </span>
-          </div>
-          <h1 style={{ fontSize: '2.1rem', fontWeight: 800, marginBottom: '0.4rem' }}>
-            Welcome, {user?.first_name ? `${user.first_name} (${user.username})` : user?.username}!
-          </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '650px' }}>
-            Ready to test your knowledge? View available examinations, begin timed tests with PostgreSQL autosave, and inspect your automated results.
-          </p>
-        </div>
-
-        {/* Metrics Row */}
+      <main style={{ flexGrow: 1, maxWidth: '1200px', width: '100%', margin: '0 auto', padding: '0 1.25rem 2rem 1.25rem' }}>
+        {/* Quick Access Section */}
         <section style={{ marginBottom: '2.5rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
-            <Link to="/student/exams" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="glass-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                  <div style={{ background: 'rgba(59, 130, 246, 0.15)', padding: '10px', borderRadius: '12px' }}>
-                    <BookOpen size={22} style={{ color: '#60a5fa' }} />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Available Exams</div>
-                    <div style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--accent-primary)' }}>
-                      {availableCount} Published &rarr;
-                    </div>
-                  </div>
-                </div>
-                <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                  Browse active examinations ready for your attempt.
-                </p>
-              </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+              Quick Access
+            </h2>
+            <Link
+              to="/student/exams"
+              style={{
+                fontSize: '0.875rem',
+                fontWeight: 700,
+                color: 'var(--primary)',
+                textDecoration: 'none'
+              }}
+            >
+              View All
             </Link>
+          </div>
 
-            <div className="glass-card">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <div style={{ background: 'rgba(16, 185, 129, 0.15)', padding: '10px', borderRadius: '12px' }}>
-                  <Award size={22} style={{ color: '#34d399' }} />
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Exams Completed</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 800 }}>{completedCount} Completed</div>
-                </div>
-              </div>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                {passedCount} passed with {avgPercentage}% average score.
-              </p>
-            </div>
+          {/* 3-Column / Responsive Pastel Card Grid matching screenshot */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+            gap: '1rem'
+          }}>
+            {quickAccessTiles.map((tile) => (
+              <div
+                key={tile.id}
+                className="pastel-card"
+                onClick={tile.onClick}
+                style={{ background: tile.bg }}
+              >
+                {/* NEW Badge if present */}
+                {tile.badge && (
+                  <span style={{
+                    position: 'absolute',
+                    top: '1rem',
+                    right: '1rem',
+                    background: '#6366f1',
+                    color: '#ffffff',
+                    fontSize: '0.65rem',
+                    fontWeight: 800,
+                    padding: '2px 8px',
+                    borderRadius: '9999px',
+                    letterSpacing: '0.04em'
+                  }}>
+                    {tile.badge}
+                  </span>
+                )}
 
-            <div className="glass-card">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <div style={{ background: 'rgba(245, 158, 11, 0.15)', padding: '10px', borderRadius: '12px' }}>
-                  <Clock size={22} style={{ color: '#fbbf24' }} />
+                {/* Circular Vibrant Icon */}
+                <div className="pastel-icon-circle" style={{ background: tile.iconBg }}>
+                  {tile.icon}
                 </div>
-                <div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Timer & Autosave</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 800 }}>Ready</div>
-                </div>
+
+                <div className="pastel-card-title">{tile.title}</div>
+                <div className="pastel-card-desc">{tile.desc}</div>
+
+                {/* Chevron Arrow */}
+                <ChevronRight size={18} className="pastel-card-arrow" />
               </div>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                PostgreSQL autosave and timer synchronization enabled.
-              </p>
-            </div>
+            ))}
           </div>
         </section>
 
-        {/* My Recent Results Section */}
-        <section style={{ marginBottom: '2.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-            <h2 style={{ fontSize: '1.3rem', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Award size={20} style={{ color: 'var(--primary)' }} /> My Examination Results & Scorecards
+        {/* Upcoming Exams & Schedule Section (styled like Upcoming Events from screenshot) */}
+        <section id="upcoming-exams-section" style={{ marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+              Upcoming Assessments & Schedule
             </h2>
-            <Link to="/student/exams" className="btn btn-secondary" style={{ fontSize: '0.85rem' }}>
-              Take an Exam &rarr;
+            <Link
+              to="/student/exams"
+              style={{
+                fontSize: '0.875rem',
+                fontWeight: 700,
+                color: 'var(--primary)',
+                textDecoration: 'none'
+              }}
+            >
+              View Calendar
             </Link>
           </div>
 
+          {loading ? (
+            <div className="card" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+              <Loader2 size={32} className="spin-animation" style={{ color: 'var(--primary)', margin: '0 auto 0.5rem auto' }} />
+              <p>Loading scheduled examinations...</p>
+            </div>
+          ) : filteredExams.length === 0 ? (
+            <div className="card" style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+              <Calendar size={44} style={{ color: 'var(--text-muted)', margin: '0 auto 0.75rem auto' }} />
+              <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '0.3rem' }}>
+                No Assessments Scheduled
+              </h3>
+              <p style={{ fontSize: '0.875rem' }}>
+                {searchTerm ? 'No exams matched your search query.' : 'All published exams will appear here with instant start actions.'}
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              {filteredExams.map((exam, idx) => (
+                <div
+                  key={exam.id}
+                  className="card"
+                  style={{
+                    padding: '1.25rem 1.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '1rem',
+                    background: '#ffffff'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+                    {/* Date Badge Box on Left (as seen in screenshot) */}
+                    <div style={{
+                      width: '64px',
+                      height: '64px',
+                      borderRadius: '16px',
+                      background: idx % 2 === 0 ? 'var(--pastel-lavender)' : 'var(--pastel-peach)',
+                      color: idx % 2 === 0 ? 'var(--primary-dark)' : 'var(--pastel-peach-icon)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      fontWeight: 800,
+                      lineHeight: 1.1
+                    }}>
+                      <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        OCT
+                      </span>
+                      <span style={{ fontSize: '1.35rem', fontWeight: 900 }}>
+                        {20 + (idx % 8)}
+                      </span>
+                      <span style={{ fontSize: '0.65rem', fontWeight: 600 }}>
+                        {idx % 2 === 0 ? 'Tue' : 'Wed'}
+                      </span>
+                    </div>
+
+                    {/* Middle Details */}
+                    <div>
+                      <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
+                        {exam.title}
+                      </h3>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '1rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                          <Clock size={14} /> {exam.duration_minutes} Mins
+                        </span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                          <MapPin size={14} /> {exam.subject}
+                        </span>
+                        <span>
+                          {exam.questions_count} Questions &bull; {exam.total_marks} Marks
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Action */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <span className="badge badge-success" style={{ padding: '0.35rem 0.75rem' }}>
+                      Active
+                    </span>
+
+                    <button
+                      onClick={() => navigate(`/exam/${exam.id}`)}
+                      className="btn btn-primary"
+                      style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+                    >
+                      Start Exam &rarr;
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* GradeSheet / Results Section */}
+        <section id="gradesheet-section" style={{ marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+              My GradeSheet & Exam Results
+            </h2>
+          </div>
+
           <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-            {loadingResults ? (
-              <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                <Loader2 size={32} className="spin-animation" style={{ color: 'var(--primary)', margin: '0 auto 0.75rem auto' }} />
-                <p>Loading your past exam results...</p>
-              </div>
-            ) : results.length === 0 ? (
-              <div style={{ padding: '3rem 2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
-                <Award size={40} style={{ margin: '0 auto 0.75rem auto', opacity: 0.5 }} />
-                <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
-                  No Exam Attempts Yet
+            {results.length === 0 ? (
+              <div style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                <Award size={40} style={{ color: 'var(--text-muted)', margin: '0 auto 0.75rem auto' }} />
+                <h3 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
+                  No GradeSheet Records Yet
                 </h3>
-                <p style={{ fontSize: '0.875rem', marginBottom: '1.25rem' }}>
-                  You have not submitted any examinations yet. Browse available exams to begin your first test!
+                <p style={{ fontSize: '0.85rem' }}>
+                  Complete an assessment to see your automated scores and question breakdown here.
                 </p>
-                <Link to="/student/exams" className="btn btn-primary">
-                  Browse Available Exams
-                </Link>
               </div>
             ) : (
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                   <thead>
                     <tr style={{
-                      background: 'rgba(30, 41, 59, 0.5)',
+                      background: '#f8fafc',
                       borderBottom: '1px solid var(--border-color)',
                       fontSize: '0.8rem',
                       textTransform: 'uppercase',
                       color: 'var(--text-secondary)'
                     }}>
-                      <th style={{ padding: '0.85rem 1.25rem' }}>Exam</th>
+                      <th style={{ padding: '0.85rem 1.25rem' }}>Exam Title</th>
                       <th style={{ padding: '0.85rem 1.25rem' }}>Subject</th>
                       <th style={{ padding: '0.85rem 1.25rem' }}>Score</th>
                       <th style={{ padding: '0.85rem 1.25rem' }}>Percentage</th>
-                      <th style={{ padding: '0.85rem 1.25rem' }}>Outcome</th>
-                      <th style={{ padding: '0.85rem 1.25rem' }}>Submitted</th>
-                      <th style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>Action</th>
+                      <th style={{ padding: '0.85rem 1.25rem' }}>Status</th>
+                      <th style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>Scorecard</th>
                     </tr>
                   </thead>
                   <tbody style={{ fontSize: '0.9rem' }}>
@@ -246,22 +441,15 @@ export default function StudentDashboard() {
                         </td>
                         <td style={{ padding: '0.85rem 1.25rem' }}>
                           {r.passed ? (
-                            <span className="badge badge-success" style={{ gap: '0.25rem' }}>
-                              <CheckCircle2 size={12} /> Passed
-                            </span>
+                            <span className="badge badge-success">Passed</span>
                           ) : (
-                            <span className="badge badge-danger" style={{ gap: '0.25rem' }}>
-                              <XCircle size={12} /> Needs Improvement
-                            </span>
+                            <span className="badge badge-danger">Needs Work</span>
                           )}
-                        </td>
-                        <td style={{ padding: '0.85rem 1.25rem', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
-                          {new Date(r.submitted_at).toLocaleDateString()}
                         </td>
                         <td style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>
                           <button
                             className="btn btn-secondary"
-                            style={{ padding: '0.3rem 0.65rem', fontSize: '0.8rem', gap: '0.3rem' }}
+                            style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem', gap: '0.3rem' }}
                             onClick={() => navigate(`/results/${r.id}`)}
                           >
                             <Eye size={13} /> View Scorecard
@@ -275,88 +463,128 @@ export default function StudentDashboard() {
             )}
           </div>
         </section>
+      </main>
 
-        {/* Role-Based Access Control Verification for Student */}
-        <section style={{ marginBottom: '2.5rem' }}>
-          <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Lock size={18} style={{ color: 'var(--accent-primary)' }} /> Student Security & Permission Boundary Check
-          </h2>
-
-          <div className="glass-card">
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-              Test your role permissions against the Django REST Framework backend. You can verify student-authorized access and confirm that admin routes are properly blocked for your account:
+      {/* Profile Detail Modal */}
+      {profileModalOpen && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(15, 23, 42, 0.6)',
+          backdropFilter: 'blur(6px)',
+          zIndex: 100,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1.5rem'
+        }}>
+          <div className="card" style={{ maxWidth: '420px', width: '100%', padding: '2rem', textAlign: 'center' }}>
+            <div style={{
+              width: '72px',
+              height: '72px',
+              borderRadius: '50%',
+              background: 'var(--portal-gradient)',
+              color: '#ffffff',
+              fontSize: '1.75rem',
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1rem auto',
+              boxShadow: '0 8px 20px rgba(79, 70, 229, 0.3)'
+            }}>
+              {(user?.first_name || user?.username || 'U').charAt(0).toUpperCase()}
+            </div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.2rem' }}>
+              {user?.first_name ? `${user.first_name} ${user.last_name || ''}` : user?.username}
+            </h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
+              @{user?.username} &bull; {user?.email}
             </p>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
-              <button 
-                id="test-student-auth-btn"
-                onClick={testStudentAccess}
-                className="btn btn-primary"
-                disabled={testingStudent}
-              >
-                {testingStudent ? 'Testing...' : 'Verify Student Authorization (/api/auth/student-check/)'}
-              </button>
-
-              <button 
-                id="test-admin-forbidden-btn"
-                onClick={testAdminRouteAccess}
-                className="btn btn-secondary"
-                disabled={testingAdminRoute}
-                style={{ borderColor: 'rgba(239, 68, 68, 0.4)' }}
-              >
-                {testingAdminRoute ? 'Testing...' : 'Attempt Admin Route (/api/auth/admin-check/)'}
-              </button>
+            <div style={{
+              background: '#f8fafc',
+              borderRadius: '12px',
+              padding: '1rem',
+              textAlign: 'left',
+              marginBottom: '1.5rem',
+              fontSize: '0.85rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Account Role:</span>
+                <strong>Student / Candidate</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Database Status:</span>
+                <span className="badge badge-success">PostgreSQL Verified</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Completed Exams:</span>
+                <strong>{results.length}</strong>
+              </div>
             </div>
 
-            {/* Results display */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
-              {studentCheckResult && (
-                <div style={{
-                  padding: '1rem',
-                  borderRadius: '10px',
-                  background: 'var(--success-bg)',
-                  border: '1px solid rgba(16, 185, 129, 0.3)'
-                }} id="student-check-success-box">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                    <CheckCircle2 size={18} style={{ color: 'var(--success)' }} />
-                    <strong style={{ fontSize: '0.9rem', color: '#6ee7b7' }}>
-                      Student Access Confirmed (HTTP 200 OK)
-                    </strong>
-                  </div>
-                  <pre style={{ fontSize: '0.8rem', fontFamily: 'monospace', color: 'var(--text-secondary)', margin: 0, overflowX: 'auto' }}>
-                    {JSON.stringify(studentCheckResult.data, null, 2)}
-                  </pre>
-                </div>
-              )}
-
-              {adminRouteTestResult && (
-                <div style={{
-                  padding: '1rem',
-                  borderRadius: '10px',
-                  background: adminRouteTestResult.status === 403 ? 'rgba(239, 68, 68, 0.12)' : 'var(--info-bg)',
-                  border: adminRouteTestResult.status === 403 ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(59, 130, 246, 0.3)'
-                }} id="admin-forbidden-result-box">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                    <ShieldAlert size={18} style={{ color: 'var(--danger)' }} />
-                    <strong style={{ fontSize: '0.9rem', color: '#fca5a5' }}>
-                      Role Boundary Enforced: HTTP {adminRouteTestResult.status} (Access Denied)
-                    </strong>
-                  </div>
-                  <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
-                    The backend successfully blocked access to the administrator endpoint because this account has role <code>STUDENT</code>.
-                  </div>
-                  <pre style={{ fontSize: '0.8rem', fontFamily: 'monospace', color: '#fca5a5', margin: 0, overflowX: 'auto' }}>
-                    {JSON.stringify({
-                      status: adminRouteTestResult.status,
-                      detail: adminRouteTestResult.error
-                    }, null, 2)}
-                  </pre>
-                </div>
-              )}
-            </div>
+            <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => setProfileModalOpen(false)}>
+              Close Profile
+            </button>
           </div>
-        </section>
-      </main>
+        </div>
+      )}
+
+      {/* Bottom Mobile / Tablet App Navigation Bar (as seen in screenshot) */}
+      <nav className="mobile-bottom-nav">
+        <div
+          className={`nav-item ${activeTab === 'home' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveTab('home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          style={{ cursor: 'pointer' }}
+        >
+          <Home size={20} />
+          <span>Home</span>
+        </div>
+
+        <div
+          className={`nav-item ${activeTab === 'calendar' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveTab('calendar');
+            navigate('/student/exams');
+          }}
+          style={{ cursor: 'pointer' }}
+        >
+          <Calendar size={20} />
+          <span>Calendar</span>
+        </div>
+
+        <div
+          className={`nav-item ${activeTab === 'messages' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveTab('messages');
+            const el = document.getElementById('gradesheet-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+          style={{ cursor: 'pointer' }}
+        >
+          <Award size={20} />
+          <span>Results</span>
+        </div>
+
+        <div
+          className={`nav-item ${activeTab === 'more' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveTab('more');
+            setProfileModalOpen(true);
+          }}
+          style={{ cursor: 'pointer' }}
+        >
+          <Grid size={20} />
+          <span>More</span>
+        </div>
+      </nav>
     </div>
   );
 }

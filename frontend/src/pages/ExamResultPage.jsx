@@ -214,9 +214,9 @@ export default function ExamResultPage() {
           }}>
             <div style={{
               padding: '1rem',
-              borderRadius: '10px',
-              background: 'rgba(30, 41, 59, 0.6)',
-              border: '1px solid var(--border-color)',
+              borderRadius: '12px',
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
               textAlign: 'center'
             }}>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
@@ -229,9 +229,9 @@ export default function ExamResultPage() {
 
             <div style={{
               padding: '1rem',
-              borderRadius: '10px',
-              background: 'rgba(30, 41, 59, 0.6)',
-              border: '1px solid var(--border-color)',
+              borderRadius: '12px',
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
               textAlign: 'center'
             }}>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.3rem' }}>
@@ -444,18 +444,18 @@ export default function ExamResultPage() {
                       const isCorrectAnswer = opt.is_correct;
                       const isStudentChoice = opt.is_selected;
 
-                      let optBg = 'rgba(30, 41, 59, 0.4)';
-                      let optBorder = '1px solid var(--border-color)';
-                      let optTextColor = 'var(--text-secondary)';
+                      let optBg = '#f8fafc';
+                      let optBorder = '1px solid #e2e8f0';
+                      let optTextColor = 'var(--text-primary)';
 
                       if (isCorrectAnswer) {
-                        optBg = 'rgba(16, 185, 129, 0.15)';
-                        optBorder = '1px solid var(--success)';
-                        optTextColor = '#34d399';
+                        optBg = '#ecfdf5';
+                        optBorder = '1.5px solid var(--success)';
+                        optTextColor = '#065f46';
                       } else if (isStudentChoice && !isCorrectAnswer) {
-                        optBg = 'rgba(239, 68, 68, 0.15)';
-                        optBorder = '1px solid var(--danger)';
-                        optTextColor = '#f87171';
+                        optBg = '#fef2f2';
+                        optBorder = '1.5px solid var(--danger)';
+                        optTextColor = '#991b1b';
                       }
 
                       return (

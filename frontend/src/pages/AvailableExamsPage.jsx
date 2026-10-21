@@ -93,22 +93,15 @@ export default function AvailableExamsPage() {
               const canTake = exam.can_attempt && attemptsLeft > 0;
 
               return (
-                <div key={exam.id} className="glass-card" style={{ display: 'flex', flexDirection: 'column' }}>
+                <div key={exam.id} className="card" style={{ display: 'flex', flexDirection: 'column', background: '#ffffff', border: '1px solid var(--border-color)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                    <span style={{ 
-                      background: 'rgba(99, 102, 241, 0.15)', 
-                      color: '#818cf8', 
-                      padding: '3px 10px', 
-                      borderRadius: '6px', 
-                      fontSize: '0.78rem', 
-                      fontWeight: 700 
-                    }}>
+                    <span className="badge badge-primary" style={{ padding: '4px 10px', fontSize: '0.8rem' }}>
                       {exam.subject}
                     </span>
 
                     {canTake ? (
                       <span className="badge badge-success">
-                        <span className="pulsing-dot"></span> Open to Attempt
+                        Open to Attempt
                       </span>
                     ) : (
                       <span className="badge badge-warning">
@@ -117,7 +110,7 @@ export default function AvailableExamsPage() {
                     )}
                   </div>
 
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#ffffff', marginBottom: '0.4rem' }}>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>
                     {exam.title}
                   </h3>
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', flexGrow: 1 }}>
@@ -130,28 +123,29 @@ export default function AvailableExamsPage() {
                     gridTemplateColumns: 'repeat(3, 1fr)', 
                     gap: '0.5rem', 
                     padding: '0.85rem', 
-                    background: 'rgba(255, 255, 255, 0.03)', 
-                    borderRadius: '10px',
+                    background: '#f8fafc', 
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '12px',
                     marginBottom: '1.25rem',
                     textAlign: 'center',
                     fontSize: '0.8rem'
                   }}>
                     <div>
-                      <div style={{ color: 'var(--text-muted)' }}>Duration</div>
-                      <strong style={{ color: '#ffffff', fontSize: '0.95rem' }}>{exam.duration_minutes} min</strong>
+                      <div style={{ color: 'var(--text-secondary)' }}>Duration</div>
+                      <strong style={{ color: 'var(--text-primary)', fontSize: '0.95rem' }}>{exam.duration_minutes} min</strong>
                     </div>
                     <div>
-                      <div style={{ color: 'var(--text-muted)' }}>Questions</div>
-                      <strong style={{ color: '#ffffff', fontSize: '0.95rem' }}>{exam.questions_count}</strong>
+                      <div style={{ color: 'var(--text-secondary)' }}>Questions</div>
+                      <strong style={{ color: 'var(--text-primary)', fontSize: '0.95rem' }}>{exam.questions_count}</strong>
                     </div>
                     <div>
-                      <div style={{ color: 'var(--text-muted)' }}>Pass Criteria</div>
-                      <strong style={{ color: '#34d399', fontSize: '0.95rem' }}>{exam.passing_marks}/{exam.total_marks}</strong>
+                      <div style={{ color: 'var(--text-secondary)' }}>Pass Criteria</div>
+                      <strong style={{ color: '#059669', fontSize: '0.95rem' }}>{exam.passing_marks}/{exam.total_marks}</strong>
                     </div>
                   </div>
 
                   {/* Availability info */}
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '1.25rem', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', display: 'flex', flexDirection: 'column', gap: '3px' }}>
                     <div>
                       Attempts: <strong>{exam.attempts_used} / {exam.max_attempts}</strong> used ({Math.max(0, attemptsLeft)} remaining)
                     </div>

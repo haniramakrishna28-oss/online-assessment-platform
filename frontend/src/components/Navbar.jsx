@@ -10,7 +10,7 @@ import {
   HelpCircle, 
   FileText, 
   Award,
-  Database
+  BookOpen
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -27,14 +27,13 @@ export default function Navbar() {
 
   return (
     <nav style={{
-      background: 'rgba(11, 15, 25, 0.85)',
-      backdropFilter: 'blur(16px)',
-      WebkitBackdropFilter: 'blur(16px)',
-      borderBottom: '1px solid var(--border-subtle)',
+      background: '#ffffff',
+      borderBottom: '1px solid var(--border-color)',
       position: 'sticky',
       top: 0,
       zIndex: 50,
       padding: '0.75rem 1.5rem',
+      boxShadow: 'var(--shadow-sm)'
     }}>
       <div style={{
         maxWidth: '1280px',
@@ -57,34 +56,34 @@ export default function Navbar() {
           }}
         >
           <div style={{
-            background: 'var(--accent-gradient)',
-            borderRadius: '10px',
-            padding: '7px',
+            background: 'var(--portal-gradient)',
+            borderRadius: '12px',
+            padding: '8px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 15px rgba(99, 102, 241, 0.4)'
+            boxShadow: '0 4px 12px rgba(79, 70, 229, 0.25)'
           }}>
             <Sparkles size={18} color="#ffffff" />
           </div>
           <div>
             <div style={{ 
-              fontFamily: 'var(--font-display)', 
               fontWeight: 800, 
               fontSize: '1.15rem', 
               letterSpacing: '-0.02em',
-              lineHeight: 1.1
+              lineHeight: 1.1,
+              color: 'var(--text-primary)'
             }}>
-              Exam<span style={{ color: 'var(--accent-primary)' }}>Sphere</span>
+              Exam<span style={{ color: 'var(--primary)' }}>Sphere</span>
             </div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+            <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
               Online Assessment Platform
             </div>
           </div>
         </Link>
 
         {/* Navigation Links */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
           {isAdmin ? (
             <>
               <Link 
@@ -93,15 +92,14 @@ export default function Navbar() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.4rem',
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '8px',
+                  padding: '0.45rem 0.9rem',
+                  borderRadius: '9999px',
                   fontSize: '0.85rem',
                   fontWeight: 600,
                   textDecoration: 'none',
-                  color: isActive('/admin/dashboard') ? '#ffffff' : 'var(--text-secondary)',
-                  background: isActive('/admin/dashboard') ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
-                  border: isActive('/admin/dashboard') ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid transparent',
-                  transition: 'all 0.2s ease'
+                  color: isActive('/admin/dashboard') ? 'var(--primary)' : 'var(--text-secondary)',
+                  background: isActive('/admin/dashboard') ? 'var(--primary-light)' : 'transparent',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 <LayoutDashboard size={15} /> Dashboard
@@ -113,15 +111,14 @@ export default function Navbar() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.4rem',
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '8px',
+                  padding: '0.45rem 0.9rem',
+                  borderRadius: '9999px',
                   fontSize: '0.85rem',
                   fontWeight: 600,
                   textDecoration: 'none',
-                  color: isActive('/admin/questions') ? '#ffffff' : 'var(--text-secondary)',
-                  background: isActive('/admin/questions') ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
-                  border: isActive('/admin/questions') ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid transparent',
-                  transition: 'all 0.2s ease'
+                  color: isActive('/admin/questions') ? 'var(--primary)' : 'var(--text-secondary)',
+                  background: isActive('/admin/questions') ? 'var(--primary-light)' : 'transparent',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 <HelpCircle size={15} /> Question Bank
@@ -133,15 +130,14 @@ export default function Navbar() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.4rem',
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '8px',
+                  padding: '0.45rem 0.9rem',
+                  borderRadius: '9999px',
                   fontSize: '0.85rem',
                   fontWeight: 600,
                   textDecoration: 'none',
-                  color: isActive('/admin/exams') ? '#ffffff' : 'var(--text-secondary)',
-                  background: isActive('/admin/exams') ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
-                  border: isActive('/admin/exams') ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid transparent',
-                  transition: 'all 0.2s ease'
+                  color: isActive('/admin/exams') ? 'var(--primary)' : 'var(--text-secondary)',
+                  background: isActive('/admin/exams') ? 'var(--primary-light)' : 'transparent',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 <FileText size={15} /> Exam Manager
@@ -153,18 +149,17 @@ export default function Navbar() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.4rem',
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '8px',
+                  padding: '0.45rem 0.9rem',
+                  borderRadius: '9999px',
                   fontSize: '0.85rem',
                   fontWeight: 600,
                   textDecoration: 'none',
-                  color: isActive('/admin/results') ? '#ffffff' : 'var(--text-secondary)',
-                  background: isActive('/admin/results') ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
-                  border: isActive('/admin/results') ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid transparent',
-                  transition: 'all 0.2s ease'
+                  color: isActive('/admin/results') ? 'var(--primary)' : 'var(--text-secondary)',
+                  background: isActive('/admin/results') ? 'var(--primary-light)' : 'transparent',
+                  transition: 'all 0.15s ease'
                 }}
               >
-                <Award size={15} /> Exam Results
+                <Award size={15} /> Results & Analytics
               </Link>
             </>
           ) : (
@@ -175,18 +170,17 @@ export default function Navbar() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.4rem',
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '8px',
+                  padding: '0.45rem 0.9rem',
+                  borderRadius: '9999px',
                   fontSize: '0.85rem',
                   fontWeight: 600,
                   textDecoration: 'none',
-                  color: isActive('/student/dashboard') ? '#ffffff' : 'var(--text-secondary)',
-                  background: isActive('/student/dashboard') ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
-                  border: isActive('/student/dashboard') ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid transparent',
-                  transition: 'all 0.2s ease'
+                  color: isActive('/student/dashboard') ? 'var(--primary)' : 'var(--text-secondary)',
+                  background: isActive('/student/dashboard') ? 'var(--primary-light)' : 'transparent',
+                  transition: 'all 0.15s ease'
                 }}
               >
-                <LayoutDashboard size={15} /> Dashboard
+                <LayoutDashboard size={15} /> Portal
               </Link>
 
               <Link 
@@ -195,18 +189,17 @@ export default function Navbar() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.4rem',
-                  padding: '0.45rem 0.85rem',
-                  borderRadius: '8px',
+                  padding: '0.45rem 0.9rem',
+                  borderRadius: '9999px',
                   fontSize: '0.85rem',
                   fontWeight: 600,
                   textDecoration: 'none',
-                  color: isActive('/student/exams') ? '#ffffff' : 'var(--text-secondary)',
-                  background: isActive('/student/exams') ? 'rgba(99, 102, 241, 0.18)' : 'transparent',
-                  border: isActive('/student/exams') ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid transparent',
-                  transition: 'all 0.2s ease'
+                  color: isActive('/student/exams') ? 'var(--primary)' : 'var(--text-secondary)',
+                  background: isActive('/student/exams') ? 'var(--primary-light)' : 'transparent',
+                  transition: 'all 0.15s ease'
                 }}
               >
-                <FileText size={15} /> Available Exams
+                <BookOpen size={15} /> Available Exams
               </Link>
             </>
           )}
@@ -219,50 +212,41 @@ export default function Navbar() {
             alignItems: 'center',
             gap: '0.6rem',
             padding: '0.35rem 0.75rem',
-            borderRadius: '10px',
-            background: 'rgba(255, 255, 255, 0.04)',
-            border: '1px solid var(--border-subtle)'
+            borderRadius: '9999px',
+            background: '#f8fafc',
+            border: '1px solid var(--border-color)'
           }}>
             <div style={{
-              width: '30px',
-              height: '30px',
+              width: '32px',
+              height: '32px',
               borderRadius: '50%',
-              background: isAdmin ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'linear-gradient(135deg, #10b981, #059669)',
+              background: 'var(--portal-gradient)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 700,
-              fontSize: '0.8rem',
+              fontSize: '0.85rem',
               color: '#ffffff'
             }}>
               {user?.username ? user.username.charAt(0).toUpperCase() : 'U'}
             </div>
             <div>
-              <div style={{ fontSize: '0.85rem', fontWeight: 600, lineHeight: 1.1 }}>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, lineHeight: 1.1, color: 'var(--text-primary)' }}>
                 {user?.username}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '2px' }}>
-                {isAdmin ? (
-                  <span className="badge badge-info" style={{ fontSize: '0.62rem', padding: '1px 5px' }}>
-                    <ShieldCheck size={10} /> Admin
-                  </span>
-                ) : (
-                  <span className="badge badge-success" style={{ fontSize: '0.62rem', padding: '1px 5px' }}>
-                    <GraduationCap size={10} /> Student
-                  </span>
-                )}
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                {isAdmin ? 'Administrator' : 'Student'}
               </div>
             </div>
           </div>
 
           <button
-            id="nav-logout-btn"
             onClick={handleLogout}
             className="btn btn-secondary"
-            style={{ padding: '0.45rem 0.75rem', fontSize: '0.85rem' }}
+            style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', gap: '0.3rem' }}
             title="Log out of system"
           >
-            <LogOut size={15} /> Logout
+            <LogOut size={14} /> Logout
           </button>
         </div>
       </div>

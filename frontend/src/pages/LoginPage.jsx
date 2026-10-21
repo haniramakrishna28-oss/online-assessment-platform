@@ -218,8 +218,8 @@ export default function LoginPage() {
         </form>
 
         {/* Quick Demo Logins Section */}
-        <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-subtle)' }}>
-          <p style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '0.75rem', textAlign: 'center', fontWeight: 700 }}>
+        <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-color)' }}>
+          <p style={{ fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', marginBottom: '0.75rem', textAlign: 'center', fontWeight: 700 }}>
             Quick Demo Accounts (1-Click Test)
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
@@ -227,26 +227,44 @@ export default function LoginPage() {
               id="demo-admin-btn"
               type="button"
               onClick={() => handleDemoLogin('admin', 'adminpassword123')}
-              className="btn btn-secondary"
-              style={{ padding: '0.6rem 0.5rem', fontSize: '0.82rem', display: 'flex', flexDirection: 'column', gap: '3px' }}
+              className="btn"
+              style={{
+                padding: '0.75rem 0.6rem',
+                fontSize: '0.82rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '4px',
+                background: 'var(--pastel-lavender)',
+                border: '1px solid var(--primary-light)',
+                borderRadius: '12px'
+              }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#818cf8', fontWeight: 700 }}>
-                <ShieldCheck size={14} /> Admin
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--primary)', fontWeight: 800 }}>
+                <ShieldCheck size={16} /> Admin Demo
               </div>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>admin / adminpassword123</span>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>admin / adminpassword123</span>
             </button>
 
             <button
               id="demo-student-btn"
               type="button"
               onClick={() => handleDemoLogin('student', 'studentpassword123')}
-              className="btn btn-secondary"
-              style={{ padding: '0.6rem 0.5rem', fontSize: '0.82rem', display: 'flex', flexDirection: 'column', gap: '3px' }}
+              className="btn"
+              style={{
+                padding: '0.75rem 0.6rem',
+                fontSize: '0.82rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '4px',
+                background: 'var(--pastel-mint)',
+                border: '1px solid var(--success-border)',
+                borderRadius: '12px'
+              }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#34d399', fontWeight: 700 }}>
-                <GraduationCap size={14} /> Student
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#047857', fontWeight: 800 }}>
+                <GraduationCap size={16} /> Student Demo
               </div>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>student / studentpassword123</span>
+              <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>student / studentpassword123</span>
             </button>
           </div>
         </div>
