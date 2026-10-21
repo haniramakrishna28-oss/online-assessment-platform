@@ -14,6 +14,8 @@ import {
   ArrowRight
 } from 'lucide-react';
 
+import GraduationCapLogo from '../components/GraduationCapLogo';
+
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -81,14 +83,15 @@ export default function LoginPage() {
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '54px',
-            height: '54px',
-            borderRadius: '16px',
-            background: 'var(--accent-gradient)',
-            boxShadow: '0 0 25px rgba(99, 102, 241, 0.45)',
-            marginBottom: '1rem'
+            width: '68px',
+            height: '68px',
+            borderRadius: '20px',
+            background: '#ffffff',
+            boxShadow: '0 10px 28px rgba(99, 102, 241, 0.22)',
+            border: '1px solid rgba(226, 232, 240, 0.8)',
+            marginBottom: '1.25rem'
           }}>
-            <Sparkles size={26} color="#ffffff" />
+            <GraduationCapLogo size={46} color="#1e293b" />
           </div>
           <h1 style={{ fontSize: '1.85rem', fontWeight: 800, marginBottom: '0.35rem' }}>
             Welcome Back

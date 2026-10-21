@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { 
+import {
   Lock, 
   User, 
   Mail, 
@@ -15,6 +15,7 @@ import {
   Loader2,
   ArrowRight
 } from 'lucide-react';
+import GraduationCapLogo from '../components/GraduationCapLogo';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -82,14 +83,15 @@ export default function RegisterPage() {
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '50px',
-            height: '50px',
-            borderRadius: '14px',
-            background: 'var(--accent-gradient)',
-            boxShadow: '0 0 25px rgba(99, 102, 241, 0.45)',
-            marginBottom: '0.85rem'
+            width: '68px',
+            height: '68px',
+            borderRadius: '20px',
+            background: '#ffffff',
+            boxShadow: '0 10px 28px rgba(99, 102, 241, 0.22)',
+            border: '1px solid rgba(226, 232, 240, 0.8)',
+            marginBottom: '1.25rem'
           }}>
-            <Sparkles size={24} color="#ffffff" />
+            <GraduationCapLogo size={46} color="#1e293b" />
           </div>
           <h1 style={{ fontSize: '1.85rem', fontWeight: 800, marginBottom: '0.25rem' }}>
             Create an Account
