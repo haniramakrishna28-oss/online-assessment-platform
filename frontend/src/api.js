@@ -1,12 +1,19 @@
 import axios from 'axios';
 
+// Clean and normalize base URL (strip trailing slashes, ensure /api suffix)
+let rawBaseURL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api').trim();
+rawBaseURL = rawBaseURL.replace(/\/+$/, '');
+if (!rawBaseURL.endsWith('/api')) {
+  rawBaseURL += '/api';
+}
+
 // Create configured Axios instance for the examination platform
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api',
+  baseURL: rawBaseURL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000,
+  timeout: 15000,
 });
 
 // Request interceptor to attach JWT token if present

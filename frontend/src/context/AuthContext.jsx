@@ -51,9 +51,15 @@ export function AuthProvider({ children }) {
       return { success: true, user: userData };
     } catch (err) {
       setLoading(false);
-      const message = err.response?.data?.detail || 
-                      err.response?.data?.non_field_errors?.[0] || 
-                      'Invalid username or password.';
+      console.error('Login error:', err);
+      let message = 'Invalid username or password.';
+      if (err.response) {
+        message = err.response.data?.detail || 
+                  err.response.data?.non_field_errors?.[0] || 
+                  'Invalid username or password.';
+      } else {
+        message = 'Cannot connect to the backend server. Please verify your backend service is running and VITE_API_BASE_URL is set correctly.';
+      }
       setAuthError(message);
       return { success: false, error: message };
     }
