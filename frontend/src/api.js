@@ -1,7 +1,15 @@
 import axios from 'axios';
 
 // Clean and normalize base URL (strip trailing slashes, ensure /api suffix)
-let rawBaseURL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api').trim();
+let rawBaseURL = (import.meta.env.VITE_API_BASE_URL || '').trim();
+
+// If not provided or mistakenly configured as a github repository link, fallback to live Render backend
+if (!rawBaseURL || rawBaseURL.includes('github.com')) {
+  rawBaseURL = import.meta.env.PROD 
+    ? 'https://exam-sphere-backend.onrender.com/api' 
+    : 'http://localhost:8000/api';
+}
+
 rawBaseURL = rawBaseURL.replace(/\/+$/, '');
 if (!rawBaseURL.endsWith('/api')) {
   rawBaseURL += '/api';
