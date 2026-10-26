@@ -8,6 +8,8 @@ backend/.env
 venv/
 env/
 ENV/
+staticfiles/
+backend/staticfiles/
 
 # Database data folder
 pgdata/
