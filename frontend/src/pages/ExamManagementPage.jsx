@@ -478,7 +478,7 @@ export default function ExamManagementPage() {
           <div style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(0, 0, 0, 0.8)',
+            background: 'rgba(15, 23, 42, 0.6)',
             backdropFilter: 'blur(8px)',
             display: 'flex',
             alignItems: 'center',
@@ -492,10 +492,13 @@ export default function ExamManagementPage() {
               maxHeight: '92vh',
               overflowY: 'auto',
               padding: '2rem',
-              borderRadius: '20px'
+              borderRadius: '20px',
+              background: '#ffffff',
+              border: '1px solid var(--border-color)',
+              boxShadow: 'var(--shadow-lg)'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 800 }}>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                   {modalMode === 'create' ? 'Configure New Exam' : 'Edit Exam Configuration'}
                 </h2>
                 <button
@@ -509,11 +512,11 @@ export default function ExamManagementPage() {
               {modalError && (
                 <div style={{
                   background: 'var(--danger-bg)',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  border: '1px solid var(--danger-border)',
                   borderRadius: '10px',
                   padding: '0.75rem 1rem',
                   marginBottom: '1.25rem',
-                  color: '#fca5a5',
+                  color: '#b91c1c',
                   fontSize: '0.85rem'
                 }}>
                   {modalError}
@@ -538,9 +541,9 @@ export default function ExamManagementPage() {
                         width: '100%',
                         padding: '0.7rem 1rem',
                         borderRadius: '10px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid var(--border-subtle)',
-                        color: '#ffffff',
+                        background: '#ffffff',
+                        border: '1px solid var(--border-color)',
+                        color: 'var(--text-primary)',
                         fontSize: '0.9rem',
                         outline: 'none',
                         fontFamily: 'inherit'
@@ -563,9 +566,9 @@ export default function ExamManagementPage() {
                         width: '100%',
                         padding: '0.7rem 1rem',
                         borderRadius: '10px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid var(--border-subtle)',
-                        color: '#ffffff',
+                        background: '#ffffff',
+                        border: '1px solid var(--border-color)',
+                        color: 'var(--text-primary)',
                         fontSize: '0.9rem',
                         outline: 'none',
                         fontFamily: 'inherit'
@@ -588,9 +591,9 @@ export default function ExamManagementPage() {
                       width: '100%',
                       padding: '0.7rem 1rem',
                       borderRadius: '10px',
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      border: '1px solid var(--border-subtle)',
-                      color: '#ffffff',
+                      background: '#ffffff',
+                      border: '1px solid var(--border-color)',
+                      color: 'var(--text-primary)',
                       fontSize: '0.9rem',
                       outline: 'none',
                       fontFamily: 'inherit',
@@ -615,9 +618,9 @@ export default function ExamManagementPage() {
                         width: '100%',
                         padding: '0.7rem 1rem',
                         borderRadius: '10px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid var(--border-subtle)',
-                        color: '#ffffff',
+                        background: '#ffffff',
+                        border: '1px solid var(--border-color)',
+                        color: 'var(--text-primary)',
                         fontSize: '0.9rem',
                         outline: 'none',
                         fontFamily: 'inherit'
@@ -639,9 +642,9 @@ export default function ExamManagementPage() {
                         width: '100%',
                         padding: '0.7rem 1rem',
                         borderRadius: '10px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid var(--border-subtle)',
-                        color: '#ffffff',
+                        background: '#ffffff',
+                        border: '1px solid var(--border-color)',
+                        color: 'var(--text-primary)',
                         fontSize: '0.9rem',
                         outline: 'none',
                         fontFamily: 'inherit'
@@ -663,9 +666,9 @@ export default function ExamManagementPage() {
                         width: '100%',
                         padding: '0.7rem 1rem',
                         borderRadius: '10px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid var(--border-subtle)',
-                        color: '#ffffff',
+                        background: '#ffffff',
+                        border: '1px solid var(--border-color)',
+                        color: 'var(--text-primary)',
                         fontSize: '0.9rem',
                         outline: 'none',
                         fontFamily: 'inherit'
@@ -688,9 +691,9 @@ export default function ExamManagementPage() {
                         width: '100%',
                         padding: '0.65rem 1rem',
                         borderRadius: '10px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid var(--border-subtle)',
-                        color: '#ffffff',
+                        background: '#ffffff',
+                        border: '1px solid var(--border-color)',
+                        color: 'var(--text-primary)',
                         fontSize: '0.85rem',
                         outline: 'none'
                       }}
@@ -709,9 +712,9 @@ export default function ExamManagementPage() {
                         width: '100%',
                         padding: '0.65rem 1rem',
                         borderRadius: '10px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid var(--border-subtle)',
-                        color: '#ffffff',
+                        background: '#ffffff',
+                        border: '1px solid var(--border-color)',
+                        color: 'var(--text-primary)',
                         fontSize: '0.85rem',
                         outline: 'none'
                       }}
@@ -728,18 +731,18 @@ export default function ExamManagementPage() {
                     onChange={(e) => setFormData({ ...formData, is_published: e.target.checked })}
                     style={{ accentColor: '#10b981', width: '18px', height: '18px', cursor: 'pointer' }}
                   />
-                  <label htmlFor="exam-is-published" style={{ fontSize: '0.9rem', fontWeight: 600, color: '#ffffff', cursor: 'pointer' }}>
+                  <label htmlFor="exam-is-published" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-primary)', cursor: 'pointer' }}>
                     Publish exam immediately (visible to students)
                   </label>
                 </div>
 
                 {/* Question Selection Section */}
-                <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1.25rem' }}>
+                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1.25rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
                     <div>
-                      <h4 style={{ fontSize: '1rem', fontWeight: 700 }}>Select Examination Questions</h4>
+                      <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Select Examination Questions</h4>
                       <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                        Selected: <strong style={{ color: '#818cf8' }}>{formData.question_ids.length}</strong> questions • Total Marks: <strong style={{ color: '#34d399' }}>{calculatedTotalMarks}</strong>
+                        Selected: <strong style={{ color: 'var(--primary)' }}>{formData.question_ids.length}</strong> questions • Total Marks: <strong style={{ color: '#059669' }}>{calculatedTotalMarks}</strong>
                       </p>
                     </div>
 
@@ -774,9 +777,9 @@ export default function ExamManagementPage() {
                         flex: 1,
                         padding: '0.45rem 0.85rem',
                         borderRadius: '8px',
-                        background: 'rgba(255, 255, 255, 0.04)',
-                        border: '1px solid var(--border-subtle)',
-                        color: '#ffffff',
+                        background: '#ffffff',
+                        border: '1px solid var(--border-color)',
+                        color: 'var(--text-primary)',
                         fontSize: '0.82rem',
                         outline: 'none'
                       }}
@@ -788,9 +791,9 @@ export default function ExamManagementPage() {
                       style={{
                         padding: '0.45rem 0.85rem',
                         borderRadius: '8px',
-                        background: 'var(--bg-secondary)',
-                        border: '1px solid var(--border-subtle)',
-                        color: '#ffffff',
+                        background: '#ffffff',
+                        border: '1px solid var(--border-color)',
+                        color: 'var(--text-primary)',
                         fontSize: '0.82rem',
                         outline: 'none'
                       }}
@@ -806,13 +809,13 @@ export default function ExamManagementPage() {
                   <div style={{ 
                     maxHeight: '220px', 
                     overflowY: 'auto', 
-                    border: '1px solid var(--border-subtle)', 
+                    border: '1px solid var(--border-color)', 
                     borderRadius: '10px', 
                     padding: '0.5rem',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '0.4rem',
-                    background: 'rgba(0, 0, 0, 0.2)'
+                    background: '#f8fafc'
                   }}>
                     {modalFilteredQuestions.map((q) => {
                       const isSelected = formData.question_ids.includes(q.id);
@@ -823,8 +826,8 @@ export default function ExamManagementPage() {
                           style={{
                             padding: '0.55rem 0.75rem',
                             borderRadius: '8px',
-                            background: isSelected ? 'rgba(99, 102, 241, 0.15)' : 'rgba(255, 255, 255, 0.02)',
-                            border: isSelected ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid transparent',
+                            background: isSelected ? 'var(--primary-light)' : '#ffffff',
+                            border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border-color)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
@@ -837,10 +840,10 @@ export default function ExamManagementPage() {
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => {}}
-                              style={{ accentColor: 'var(--accent-primary)', width: '16px', height: '16px' }}
+                              style={{ accentColor: 'var(--primary)', width: '16px', height: '16px' }}
                             />
-                            <span style={{ color: isSelected ? '#ffffff' : 'var(--text-secondary)' }}>
-                              <strong style={{ color: '#818cf8', marginRight: '6px' }}>[{q.subject}]</strong>
+                            <span style={{ color: isSelected ? 'var(--primary-dark)' : 'var(--text-primary)' }}>
+                              <strong style={{ color: 'var(--primary)', marginRight: '6px' }}>[{q.subject}]</strong>
                               {q.question_text}
                             </span>
                           </div>
