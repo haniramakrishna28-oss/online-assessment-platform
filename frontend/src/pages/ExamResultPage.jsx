@@ -320,7 +320,7 @@ export default function ExamResultPage() {
                 style={{
                   padding: '0.4rem 0.8rem',
                   fontSize: '0.8rem',
-                  background: filterMode === 'ALL' ? 'var(--primary)' : 'rgba(30, 41, 59, 0.6)',
+                  background: filterMode === 'ALL' ? 'var(--primary)' : '#f8fafc',
                   color: filterMode === 'ALL' ? '#ffffff' : 'var(--text-secondary)',
                   border: '1px solid var(--border-color)'
                 }}
@@ -333,8 +333,8 @@ export default function ExamResultPage() {
                 style={{
                   padding: '0.4rem 0.8rem',
                   fontSize: '0.8rem',
-                  background: filterMode === 'CORRECT' ? 'var(--success)' : 'rgba(30, 41, 59, 0.6)',
-                  color: '#ffffff',
+                  background: filterMode === 'CORRECT' ? 'var(--success)' : '#f8fafc',
+                  color: filterMode === 'CORRECT' ? '#ffffff' : 'var(--text-secondary)',
                   border: '1px solid var(--border-color)'
                 }}
               >
@@ -346,8 +346,8 @@ export default function ExamResultPage() {
                 style={{
                   padding: '0.4rem 0.8rem',
                   fontSize: '0.8rem',
-                  background: filterMode === 'WRONG' ? 'var(--danger)' : 'rgba(30, 41, 59, 0.6)',
-                  color: '#ffffff',
+                  background: filterMode === 'WRONG' ? 'var(--danger)' : '#f8fafc',
+                  color: filterMode === 'WRONG' ? '#ffffff' : 'var(--text-secondary)',
                   border: '1px solid var(--border-color)'
                 }}
               >
@@ -359,8 +359,8 @@ export default function ExamResultPage() {
                 style={{
                   padding: '0.4rem 0.8rem',
                   fontSize: '0.8rem',
-                  background: filterMode === 'UNANSWERED' ? 'var(--text-secondary)' : 'rgba(30, 41, 59, 0.6)',
-                  color: '#ffffff',
+                  background: filterMode === 'UNANSWERED' ? 'var(--text-secondary)' : '#f8fafc',
+                  color: filterMode === 'UNANSWERED' ? '#ffffff' : 'var(--text-secondary)',
                   border: '1px solid var(--border-color)'
                 }}
               >
