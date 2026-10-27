@@ -198,7 +198,7 @@ export default function AdminResultsPage() {
                 style={{
                   padding: '0.5rem 0.85rem',
                   fontSize: '0.85rem',
-                  background: statusFilter === 'ALL' ? 'var(--primary)' : 'rgba(30, 41, 59, 0.6)',
+                  background: statusFilter === 'ALL' ? 'var(--primary)' : '#f8fafc',
                   color: statusFilter === 'ALL' ? '#ffffff' : 'var(--text-secondary)',
                   border: '1px solid var(--border-color)'
                 }}
@@ -211,8 +211,8 @@ export default function AdminResultsPage() {
                 style={{
                   padding: '0.5rem 0.85rem',
                   fontSize: '0.85rem',
-                  background: statusFilter === 'PASSED' ? 'var(--success)' : 'rgba(30, 41, 59, 0.6)',
-                  color: '#ffffff',
+                  background: statusFilter === 'PASSED' ? 'var(--success)' : '#f8fafc',
+                  color: statusFilter === 'PASSED' ? '#ffffff' : 'var(--text-secondary)',
                   border: '1px solid var(--border-color)'
                 }}
               >
@@ -224,8 +224,8 @@ export default function AdminResultsPage() {
                 style={{
                   padding: '0.5rem 0.85rem',
                   fontSize: '0.85rem',
-                  background: statusFilter === 'FAILED' ? 'var(--danger)' : 'rgba(30, 41, 59, 0.6)',
-                  color: '#ffffff',
+                  background: statusFilter === 'FAILED' ? 'var(--danger)' : '#f8fafc',
+                  color: statusFilter === 'FAILED' ? '#ffffff' : 'var(--text-secondary)',
                   border: '1px solid var(--border-color)'
                 }}
               >
