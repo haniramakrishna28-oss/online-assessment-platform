@@ -16,6 +16,14 @@
   --primary-light: #e0e7ff;
   --primary-dark: #3730a3;
 
+  /* Aliases for legacy component compatibility */
+  --accent-primary: #4f46e5;
+  --accent-primary-hover: #4338ca;
+  --accent-secondary: #6366f1;
+  --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #8b5cf6 100%);
+  --bg-primary: #f4f6fc;
+  --bg-secondary: #ffffff;
+
   /* Typography Colors */
   --text-primary: #1e293b;
   --text-secondary: #64748b;
@@ -294,6 +302,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Inputs & Form controls */
+input, textarea, select {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+select option {
+  background: #ffffff;
+  color: var(--text-primary);
+}
+
 .input-field {
   width: 100%;
   padding: 0.75rem 1rem;
