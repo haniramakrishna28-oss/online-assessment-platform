@@ -139,16 +139,16 @@ export default function LoginPage() {
                   width: '100%',
                   padding: '0.75rem 1rem 0.75rem 2.5rem',
                   borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid var(--border-subtle)',
-                  color: '#ffffff',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.95rem',
                   outline: 'none',
                   transition: 'border-color 0.2s ease',
                   fontFamily: 'inherit'
                 }}
-                onFocus={(e) => e.target.style.borderColor = 'var(--accent-primary)'}
-                onBlur={(e) => e.target.style.borderColor = 'var(--border-subtle)'}
+                onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
               />
             </div>
           </div>
@@ -170,16 +170,16 @@ export default function LoginPage() {
                   width: '100%',
                   padding: '0.75rem 2.5rem 0.75rem 2.5rem',
                   borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid var(--border-subtle)',
-                  color: '#ffffff',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.95rem',
                   outline: 'none',
                   transition: 'border-color 0.2s ease',
                   fontFamily: 'inherit'
                 }}
-                onFocus={(e) => e.target.style.borderColor = 'var(--accent-primary)'}
-                onBlur={(e) => e.target.style.borderColor = 'var(--border-subtle)'}
+                onFocus={(e) => e.target.style.borderColor = 'var(--primary)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
               />
               <button
                 type="button"
