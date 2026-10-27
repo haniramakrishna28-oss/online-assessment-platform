@@ -12,6 +12,7 @@ import AvailableExamsPage from './pages/AvailableExamsPage';
 import ExamTakingPage from './pages/ExamTakingPage';
 import ExamResultPage from './pages/ExamResultPage';
 import AdminResultsPage from './pages/AdminResultsPage';
+import FacultyDirectoryPage from './pages/FacultyDirectoryPage';
 import { AlertCircle } from 'lucide-react';
 
 function RootRedirect() {
@@ -149,6 +150,48 @@ export default function App() {
             element={
               <ProtectedRoute allowedRoles={['STUDENT', 'ADMIN']}>
                 <ExamResultPage />
+              </ProtectedRoute>
+            } 
+          />
+
+          {/* Faculty, Staff Directory, Library & Notices (Openable in separate tab) */}
+          <Route 
+            path="/student/staffs" 
+            element={
+              <ProtectedRoute allowedRoles={['STUDENT', 'ADMIN']}>
+                <FacultyDirectoryPage initialTab="staffs" />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/student/faculty" 
+            element={
+              <ProtectedRoute allowedRoles={['STUDENT', 'ADMIN']}>
+                <FacultyDirectoryPage initialTab="staffs" />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/student/notices" 
+            element={
+              <ProtectedRoute allowedRoles={['STUDENT', 'ADMIN']}>
+                <FacultyDirectoryPage initialTab="notices" />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/student/library" 
+            element={
+              <ProtectedRoute allowedRoles={['STUDENT', 'ADMIN']}>
+                <FacultyDirectoryPage initialTab="library" />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/student/support" 
+            element={
+              <ProtectedRoute allowedRoles={['STUDENT', 'ADMIN']}>
+                <FacultyDirectoryPage initialTab="support" />
               </ProtectedRoute>
             } 
           />

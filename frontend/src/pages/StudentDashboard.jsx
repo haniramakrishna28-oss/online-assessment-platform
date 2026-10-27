@@ -27,7 +27,8 @@ import {
   Grid,
   ShieldCheck,
   Sparkles,
-  AlertCircle
+  AlertCircle,
+  ExternalLink
 } from 'lucide-react';
 
 export default function StudentDashboard() {
@@ -40,8 +41,9 @@ export default function StudentDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('home'); // 'home' | 'calendar' | 'messages' | 'more'
 
-  // Profile modal state
+  // Profile and Info modal state
   const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [infoModal, setInfoModal] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,7 +102,8 @@ export default function StudentDashboard() {
       bg: 'var(--pastel-sky)',
       iconBg: 'var(--pastel-sky-icon)',
       icon: <Users size={20} />,
-      onClick: () => alert('Faculty & Examination Committee:\n- Dr. Alan Turing (Chief Examiner)\n- Prof. Grace Hopper (Assessment Chair)\n- Admin Support Desk (active)')
+      url: '/student/staffs',
+      openTab: true
     },
     {
       id: 'attendance',
@@ -109,7 +112,28 @@ export default function StudentDashboard() {
       bg: 'var(--pastel-mint)',
       iconBg: 'var(--pastel-mint-icon)',
       icon: <CheckSquare size={20} />,
-      onClick: () => alert('Assessment Attendance: 100% Active\nVerified through PostgreSQL session timestamps.')
+      onClick: () => setInfoModal({
+        title: 'Attendance Record',
+        subtitle: 'Continuous Examination & Session Verification',
+        icon: <CheckSquare size={22} />,
+        iconBg: 'var(--pastel-mint)',
+        iconColor: 'var(--success)',
+        content: (
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.85rem 1rem', background: '#ecfdf5', borderRadius: '12px', marginBottom: '1rem', border: '1px solid #a7f3d0' }}>
+              <span style={{ fontWeight: 600, color: '#065f46' }}>Session Attendance:</span>
+              <span className="badge badge-success" style={{ fontSize: '0.9rem' }}>100% Present</span>
+            </div>
+            <p style={{ margin: '0 0 0.75rem 0', color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
+              Your attendance is logged and verified through PostgreSQL timestamp tokens for all registered examinations.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', fontSize: '0.8rem', color: 'var(--text-muted)', background: '#f8fafc', padding: '0.75rem', borderRadius: '8px' }}>
+              <div>• Candidate ID: <strong>{user?.id ? `STU-${String(user.id).padStart(4, '0')}` : 'STU-0042'}</strong></div>
+              <div>• Audit Status: <strong>Verified by Academic Committee</strong></div>
+            </div>
+          </div>
+        )
+      })
     },
     {
       id: 'chatbox',
@@ -118,7 +142,8 @@ export default function StudentDashboard() {
       bg: 'var(--pastel-rose)',
       iconBg: 'var(--pastel-rose-icon)',
       icon: <MessageSquare size={20} />,
-      onClick: () => alert('Student Helpdesk & Support is online. For exam inquiries, contact your assigned administrator.')
+      url: '/student/support',
+      openTab: true
     },
     {
       id: 'gradesheet',
@@ -139,7 +164,33 @@ export default function StudentDashboard() {
       bg: 'var(--pastel-blue)',
       iconBg: 'var(--pastel-blue-icon)',
       icon: <Image size={20} />,
-      onClick: () => alert('Platform media archive: ExamSphere Assessment Platform v2.0.')
+      onClick: () => setInfoModal({
+        title: 'Campus & Testing Labs',
+        subtitle: 'Platform Infrastructure Highlights',
+        icon: <Image size={22} />,
+        iconBg: 'var(--pastel-blue)',
+        iconColor: '#2563eb',
+        content: (
+          <div>
+            <p style={{ margin: '0 0 0.85rem 0', color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
+              ExamSphere digital assessment infrastructure spans dedicated testing facilities with real-time sync to PostgreSQL:
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.75rem' }}>
+              <div style={{ background: '#eff6ff', padding: '0.75rem', borderRadius: '10px', textAlign: 'center', border: '1px solid #dbeafe' }}>
+                <strong style={{ color: '#1d4ed8', fontSize: '0.95rem', display: 'block' }}>Turing Wing</strong>
+                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Computational Lab 4B</span>
+              </div>
+              <div style={{ background: '#f0fdf4', padding: '0.75rem', borderRadius: '10px', textAlign: 'center', border: '1px solid #dcfce7' }}>
+                <strong style={{ color: '#15803d', fontSize: '0.95rem', display: 'block' }}>Hopper Hall</strong>
+                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Assessment Center 204</span>
+              </div>
+            </div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textAlign: 'center' }}>
+              High-availability proctored terminals & automated code sandboxes.
+            </div>
+          </div>
+        )
+      })
     },
     {
       id: 'fees',
@@ -148,7 +199,28 @@ export default function StudentDashboard() {
       bg: 'var(--pastel-teal)',
       iconBg: 'var(--pastel-teal-icon)',
       icon: <CreditCard size={20} />,
-      onClick: () => alert('Assessment Account Status: Fully Paid & Cleared for all certified examinations.')
+      onClick: () => setInfoModal({
+        title: 'Fees & Assessment Clearance',
+        subtitle: 'Financial Verification Slip',
+        icon: <CreditCard size={22} />,
+        iconBg: 'var(--pastel-teal)',
+        iconColor: '#0d9488',
+        content: (
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.85rem 1rem', background: '#ecfdf5', borderRadius: '12px', marginBottom: '1rem', border: '1px solid #a7f3d0' }}>
+              <span style={{ fontWeight: 600, color: '#065f46' }}>Academic Fee Status:</span>
+              <span className="badge badge-success" style={{ fontSize: '0.9rem' }}>Fully Paid & Cleared</span>
+            </div>
+            <p style={{ margin: '0 0 0.75rem 0', color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
+              All term examination fees and digital testing lab dues are fully settled. No restrictions apply to any upcoming assessments.
+            </p>
+            <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '8px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              <div>• Clearance Token: <strong>FEE-2026-CLEAR-PASS</strong></div>
+              <div>• Admit Card Authorization: <span style={{ color: 'var(--success)', fontWeight: 600 }}>Active</span></div>
+            </div>
+          </div>
+        )
+      })
     },
     {
       id: 'notices',
@@ -158,7 +230,8 @@ export default function StudentDashboard() {
       iconBg: 'var(--pastel-purple-icon)',
       badge: 'NEW',
       icon: <FileText size={20} />,
-      onClick: () => alert('Notice [NEW]:\nFinal Examination Window is open. Remember that timer runs continuously and autosaves to PostgreSQL upon every choice.')
+      url: '/student/notices',
+      openTab: true
     },
     {
       id: 'assignments',
@@ -185,7 +258,8 @@ export default function StudentDashboard() {
       bg: 'var(--pastel-sky)',
       iconBg: 'var(--pastel-sky-icon)',
       icon: <Library size={20} />,
-      onClick: () => alert('Digital Exam Guidelines & Resource Bank:\n- Python 3 Reference Documentation\n- Standard Examination Conduct Handbook')
+      url: '/student/library',
+      openTab: true
     }
   ];
 
@@ -226,43 +300,99 @@ export default function StudentDashboard() {
             gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
             gap: '1rem'
           }}>
-            {quickAccessTiles.map((tile) => (
-              <div
-                key={tile.id}
-                className="pastel-card"
-                onClick={tile.onClick}
-                style={{ background: tile.bg }}
-              >
-                {/* NEW Badge if present */}
-                {tile.badge && (
-                  <span style={{
-                    position: 'absolute',
-                    top: '1rem',
-                    right: '1rem',
-                    background: '#6366f1',
-                    color: '#ffffff',
-                    fontSize: '0.65rem',
-                    fontWeight: 800,
-                    padding: '2px 8px',
-                    borderRadius: '9999px',
-                    letterSpacing: '0.04em'
-                  }}>
-                    {tile.badge}
-                  </span>
-                )}
+            {quickAccessTiles.map((tile) => {
+              if (tile.openTab && tile.url) {
+                return (
+                  <a
+                    key={tile.id}
+                    href={tile.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="pastel-card"
+                    style={{ background: tile.bg, textDecoration: 'none' }}
+                    title={`${tile.title} - Opens in separate tab`}
+                  >
+                    {/* NEW Badge if present */}
+                    {tile.badge && (
+                      <span style={{
+                        position: 'absolute',
+                        top: '1rem',
+                        right: '1rem',
+                        background: '#6366f1',
+                        color: '#ffffff',
+                        fontSize: '0.65rem',
+                        fontWeight: 800,
+                        padding: '2px 8px',
+                        borderRadius: '9999px',
+                        letterSpacing: '0.04em'
+                      }}>
+                        {tile.badge}
+                      </span>
+                    )}
 
-                {/* Circular Vibrant Icon */}
-                <div className="pastel-icon-circle" style={{ background: tile.iconBg }}>
-                  {tile.icon}
+                    {/* Circular Vibrant Icon */}
+                    <div className="pastel-icon-circle" style={{ background: tile.iconBg }}>
+                      {tile.icon}
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <div className="pastel-card-title">{tile.title}</div>
+                      <ExternalLink size={13} style={{ color: 'var(--text-muted)' }} />
+                    </div>
+                    <div className="pastel-card-desc">{tile.desc}</div>
+
+                    {/* Chevron Arrow */}
+                    <ChevronRight size={18} className="pastel-card-arrow" />
+                  </a>
+                );
+              }
+
+              return (
+                <div
+                  key={tile.id}
+                  className="pastel-card"
+                  onClick={tile.onClick}
+                  style={{ background: tile.bg }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      tile.onClick && tile.onClick();
+                    }
+                  }}
+                >
+                  {/* NEW Badge if present */}
+                  {tile.badge && (
+                    <span style={{
+                      position: 'absolute',
+                      top: '1rem',
+                      right: '1rem',
+                      background: '#6366f1',
+                      color: '#ffffff',
+                      fontSize: '0.65rem',
+                      fontWeight: 800,
+                      padding: '2px 8px',
+                      borderRadius: '9999px',
+                      letterSpacing: '0.04em'
+                    }}>
+                      {tile.badge}
+                    </span>
+                  )}
+
+                  {/* Circular Vibrant Icon */}
+                  <div className="pastel-icon-circle" style={{ background: tile.iconBg }}>
+                    {tile.icon}
+                  </div>
+
+                  <div className="pastel-card-title">{tile.title}</div>
+                  <div className="pastel-card-desc">{tile.desc}</div>
+
+                  {/* Chevron Arrow */}
+                  <ChevronRight size={18} className="pastel-card-arrow" />
                 </div>
-
-                <div className="pastel-card-title">{tile.title}</div>
-                <div className="pastel-card-desc">{tile.desc}</div>
-
-                {/* Chevron Arrow */}
-                <ChevronRight size={18} className="pastel-card-arrow" />
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
@@ -530,6 +660,93 @@ export default function StudentDashboard() {
             <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => setProfileModalOpen(false)}>
               Close Profile
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Generic Info Modal (Attendance, Gallery, Fees Details) */}
+      {infoModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '1rem'
+          }}
+          onClick={() => setInfoModal(null)}
+        >
+          <div
+            className="card"
+            style={{
+              maxWidth: '480px',
+              width: '100%',
+              background: '#ffffff',
+              borderRadius: '20px',
+              padding: '1.75rem',
+              boxShadow: '0 20px 40px -10px rgba(0,0,0,0.25)',
+              border: '1px solid #e2e8f0'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  background: infoModal.iconBg || 'var(--pastel-sky)',
+                  color: infoModal.iconColor || 'var(--primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {infoModal.icon}
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
+                    {infoModal.title}
+                  </h3>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    {infoModal.subtitle || 'Academic Record Verification'}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setInfoModal(null)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0.35rem',
+                  borderRadius: '50%',
+                  color: 'var(--text-muted)'
+                }}
+              >
+                <XCircle size={22} />
+              </button>
+            </div>
+
+            <div style={{ marginBottom: '1.5rem', color: 'var(--text-primary)', fontSize: '0.925rem', lineHeight: 1.6 }}>
+              {infoModal.content}
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <button
+                className="btn btn-primary"
+                style={{ flex: 1 }}
+                onClick={() => setInfoModal(null)}
+              >
+                Dismiss
+              </button>
+            </div>
           </div>
         </div>
       )}
