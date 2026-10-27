@@ -154,16 +154,16 @@ export default function RegisterPage() {
                   padding: '0.85rem',
                   borderRadius: '12px',
                   cursor: 'pointer',
-                  border: formData.role === 'STUDENT' ? '2px solid #10b981' : '1px solid var(--border-subtle)',
-                  background: formData.role === 'STUDENT' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+                  border: formData.role === 'STUDENT' ? '2px solid var(--success)' : '1px solid var(--border-color)',
+                  background: formData.role === 'STUDENT' ? 'var(--success-bg)' : '#f8fafc',
                   transition: 'all 0.2s ease',
                   textAlign: 'center'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', color: '#34d399', fontWeight: 700, marginBottom: '2px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', color: '#059669', fontWeight: 700, marginBottom: '2px' }}>
                   <GraduationCap size={18} /> Student
                 </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                   Take exams & view results
                 </div>
               </div>
@@ -175,16 +175,16 @@ export default function RegisterPage() {
                   padding: '0.85rem',
                   borderRadius: '12px',
                   cursor: 'pointer',
-                  border: formData.role === 'ADMIN' ? '2px solid #6366f1' : '1px solid var(--border-subtle)',
-                  background: formData.role === 'ADMIN' ? 'rgba(99, 102, 241, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+                  border: formData.role === 'ADMIN' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
+                  background: formData.role === 'ADMIN' ? 'var(--primary-light)' : '#f8fafc',
                   transition: 'all 0.2s ease',
                   textAlign: 'center'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', color: '#818cf8', fontWeight: 700, marginBottom: '2px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', color: 'var(--primary-dark)', fontWeight: 700, marginBottom: '2px' }}>
                   <ShieldCheck size={18} /> Admin
                 </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                   Manage question bank & exams
                 </div>
               </div>
@@ -210,9 +210,9 @@ export default function RegisterPage() {
                   width: '100%',
                   padding: '0.7rem 1rem 0.7rem 2.4rem',
                   borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid var(--border-subtle)',
-                  color: '#ffffff',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.9rem',
                   outline: 'none',
                   fontFamily: 'inherit'
@@ -240,9 +240,9 @@ export default function RegisterPage() {
                   width: '100%',
                   padding: '0.7rem 1rem 0.7rem 2.4rem',
                   borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid var(--border-subtle)',
-                  color: '#ffffff',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.9rem',
                   outline: 'none',
                   fontFamily: 'inherit'
@@ -268,9 +268,9 @@ export default function RegisterPage() {
                   width: '100%',
                   padding: '0.7rem 1rem',
                   borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid var(--border-subtle)',
-                  color: '#ffffff',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.9rem',
                   outline: 'none',
                   fontFamily: 'inherit'
@@ -292,9 +292,9 @@ export default function RegisterPage() {
                   width: '100%',
                   padding: '0.7rem 1rem',
                   borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid var(--border-subtle)',
-                  color: '#ffffff',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.9rem',
                   outline: 'none',
                   fontFamily: 'inherit'
@@ -321,9 +321,9 @@ export default function RegisterPage() {
                   width: '100%',
                   padding: '0.7rem 1rem',
                   borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid var(--border-subtle)',
-                  color: '#ffffff',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.9rem',
                   outline: 'none',
                   fontFamily: 'inherit'
@@ -346,9 +346,9 @@ export default function RegisterPage() {
                   width: '100%',
                   padding: '0.7rem 1rem',
                   borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid var(--border-subtle)',
-                  color: '#ffffff',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.9rem',
                   outline: 'none',
                   fontFamily: 'inherit'
