@@ -33,9 +33,11 @@ export default function ExamTakingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [timeExpiredModal, setTimeExpiredModal] = useState(false);
+  const [takingLonger, setTakingLonger] = useState(false);
 
   const timerRef = useRef(null);
   const isExpiredHandledRef = useRef(false);
+  const submitExamRef = useRef(null);
 
   // Format seconds to HH:MM:SS or MM:SS
   const formatTime = (secs) => {
@@ -52,10 +54,11 @@ export default function ExamTakingPage() {
 
   // Submit attempt helper
   const submitExam = useCallback(async (isExpired = false) => {
-    if (submitting || !attemptData) return;
+    const targetAttemptId = attemptData?.id;
+    if (submitting || !targetAttemptId) return;
     setSubmitting(true);
     try {
-      const res = await api.post(`/attempts/${attemptData.id}/submit/`);
+      const res = await api.post(`/attempts/${targetAttemptId}/submit/`);
       const resultId = res.data?.result?.id;
       if (resultId) {
         navigate(`/results/${resultId}`, { replace: true });
@@ -71,15 +74,27 @@ export default function ExamTakingPage() {
         setSubmitting(false);
       }
     }
-  }, [attemptData, submitting, navigate]);
+  }, [attemptData?.id, submitting, navigate]);
 
-  // Load or resume attempt
+  // Keep ref up to date
+  useEffect(() => {
+    submitExamRef.current = submitExam;
+  }, [submitExam]);
+
+  // Load or resume attempt - ONLY runs when id changes
   useEffect(() => {
     let isMounted = true;
+
+    // Detect if loading is taking unusually long (e.g. backend cold start)
+    const slowTimer = setTimeout(() => {
+      if (isMounted) setTakingLonger(true);
+    }, 6000);
 
     const startOrResumeExam = async () => {
       setLoading(true);
       setError(null);
+      setTakingLonger(false);
+
       try {
         const res = await api.post(`/exams/${id}/start/`);
         if (!isMounted) return;
@@ -102,7 +117,7 @@ export default function ExamTakingPage() {
 
         if (data.remaining_seconds <= 0) {
           setTimeExpiredModal(true);
-          submitExam(true);
+          submitExamRef.current?.(true);
         }
       } catch (err) {
         if (!isMounted) return;
@@ -112,7 +127,10 @@ export default function ExamTakingPage() {
           setTimeExpiredModal(true);
         }
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+          clearTimeout(slowTimer);
+        }
       }
     };
 
@@ -120,9 +138,10 @@ export default function ExamTakingPage() {
 
     return () => {
       isMounted = false;
+      clearTimeout(slowTimer);
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [id, submitExam]);
+  }, [id]);
 
   // Persistent Countdown Timer
   useEffect(() => {
@@ -135,7 +154,7 @@ export default function ExamTakingPage() {
           if (!isExpiredHandledRef.current) {
             isExpiredHandledRef.current = true;
             setTimeExpiredModal(true);
-            submitExam(true);
+            submitExamRef.current?.(true);
           }
           return 0;
         }
@@ -146,7 +165,7 @@ export default function ExamTakingPage() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [loading, attemptData, submitExam]);
+  }, [loading, attemptData?.id]);
 
   // Autosave answer selection to PostgreSQL
   const handleSelectOption = async (questionId, optionId) => {
@@ -223,14 +242,49 @@ export default function ExamTakingPage() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '1rem',
-        background: 'var(--bg-main)'
+        background: 'var(--bg-main)',
+        padding: '2rem',
+        textAlign: 'center'
       }}>
-        <Loader2 size={44} className="spin-animation" style={{ color: 'var(--primary)' }} />
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Loading Examination Environment...</h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+        <Loader2 size={44} className="spin-animation" style={{ color: 'var(--primary)', marginBottom: '1rem' }} />
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
+          Loading Examination Environment...
+        </h2>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', maxWidth: '420px', lineHeight: 1.5, margin: 0 }}>
           Restoring attempt state, randomized questions, and answers from PostgreSQL.
         </p>
+
+        {takingLonger && (
+          <div style={{
+            marginTop: '1.5rem',
+            padding: '1.25rem',
+            background: '#ffffff',
+            borderRadius: '16px',
+            border: '1px solid #e2e8f0',
+            maxWidth: '380px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.06)'
+          }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0 0 1rem 0', lineHeight: 1.4 }}>
+              Connecting to PostgreSQL cluster... If taking longer than expected, you can retry or return to your dashboard.
+            </p>
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+              <button
+                className="btn btn-primary"
+                style={{ fontSize: '0.825rem', padding: '0.45rem 0.9rem' }}
+                onClick={() => window.location.reload()}
+              >
+                Retry Connection
+              </button>
+              <button
+                className="btn btn-secondary"
+                style={{ fontSize: '0.825rem', padding: '0.45rem 0.9rem' }}
+                onClick={() => navigate('/student/dashboard')}
+              >
+                Dashboard
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -245,15 +299,28 @@ export default function ExamTakingPage() {
         padding: '2rem',
         background: 'var(--bg-main)'
       }}>
-        <div className="card" style={{ maxWidth: '480px', width: '100%', textAlign: 'center', padding: '2.5rem' }}>
+        <div className="card" style={{ maxWidth: '480px', width: '100%', textAlign: 'center', padding: '2.5rem', background: '#ffffff', borderRadius: '20px' }}>
           <ShieldAlert size={48} style={{ color: 'var(--danger)', margin: '0 auto 1.5rem auto' }} />
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.75rem' }}>Access Restricted</h2>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '0.75rem', color: 'var(--text-primary)' }}>
+            Assessment Notice
+          </h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '1.75rem', lineHeight: 1.5 }}>
             {error}
           </p>
-          <button className="btn btn-primary" onClick={() => navigate('/student/exams')}>
-            Return to Available Exams
-          </button>
+          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+            <button
+              className="btn btn-secondary"
+              onClick={() => window.location.reload()}
+            >
+              Retry
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={() => navigate('/student/exams')}
+            >
+              Return to Exams
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -478,7 +545,7 @@ export default function ExamTakingPage() {
                 fontWeight: 500,
                 whiteSpace: 'pre-wrap'
               }}>
-                {currentQuestion.text}
+                {currentQuestion.question_text || currentQuestion.text}
               </div>
 
               {/* Options List */}
@@ -535,7 +602,7 @@ export default function ExamTakingPage() {
                         fontWeight: isSelected ? 600 : 400,
                         flexGrow: 1
                       }}>
-                        {option.text}
+                        {option.option_text || option.text}
                       </div>
 
                       {isSelected && (
