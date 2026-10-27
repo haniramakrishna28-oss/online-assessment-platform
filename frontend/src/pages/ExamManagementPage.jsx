@@ -303,9 +303,9 @@ export default function ExamManagementPage() {
                   width: '100%',
                   padding: '0.65rem 1rem 0.65rem 2.4rem',
                   borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid var(--border-subtle)',
-                  color: '#ffffff',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.9rem',
                   outline: 'none',
                   fontFamily: 'inherit'
@@ -322,9 +322,9 @@ export default function ExamManagementPage() {
                   width: '100%',
                   padding: '0.65rem 1rem',
                   borderRadius: '10px',
-                  background: 'var(--bg-secondary)',
-                  border: '1px solid var(--border-subtle)',
-                  color: '#ffffff',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.88rem',
                   outline: 'none',
                   cursor: 'pointer'
@@ -345,18 +345,18 @@ export default function ExamManagementPage() {
         {/* Exams List */}
         {loading ? (
           <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-            <Loader2 size={36} className="animate-spin" style={{ color: 'var(--accent-primary)', margin: '0 auto 1rem auto' }} />
+            <Loader2 size={36} className="animate-spin" style={{ color: 'var(--primary)', margin: '0 auto 1rem auto' }} />
             <p>Loading exam configurations from PostgreSQL...</p>
           </div>
         ) : error ? (
-          <div style={{ padding: '1.5rem', background: 'var(--danger-bg)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '12px', color: '#fca5a5' }}>
+          <div style={{ padding: '1.5rem', background: 'var(--danger-bg)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '12px', color: '#b91c1c' }}>
             <AlertCircle size={20} style={{ marginBottom: '0.5rem', color: 'var(--danger)' }} />
             <div>{error}</div>
           </div>
         ) : exams.length === 0 ? (
           <div className="glass-card" style={{ textAlign: 'center', padding: '3rem 2rem' }}>
             <FileText size={48} style={{ color: 'var(--text-muted)', margin: '0 auto 1rem auto' }} />
-            <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>No exams found</h3>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>No exams found</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
               No exams matched your filter. Click below to configure your first examination.
             </p>
@@ -371,8 +371,8 @@ export default function ExamManagementPage() {
                 {/* Card Top */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.85rem' }}>
                   <span style={{ 
-                    background: 'rgba(99, 102, 241, 0.15)', 
-                    color: '#818cf8', 
+                    background: 'var(--primary-light)', 
+                    color: 'var(--primary-dark)', 
                     padding: '3px 9px', 
                     borderRadius: '6px', 
                     fontSize: '0.75rem', 
@@ -387,7 +387,7 @@ export default function ExamManagementPage() {
                 </div>
 
                 {/* Title & Description */}
-                <h3 style={{ fontSize: '1.2rem', marginBottom: '0.4rem', color: '#ffffff' }}>
+                <h3 style={{ fontSize: '1.2rem', marginBottom: '0.4rem', color: 'var(--text-primary)' }}>
                   {exam.title}
                 </h3>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', flexGrow: 1 }}>
@@ -400,7 +400,8 @@ export default function ExamManagementPage() {
                   gridTemplateColumns: 'repeat(3, 1fr)', 
                   gap: '0.5rem', 
                   padding: '0.75rem', 
-                  background: 'rgba(255, 255, 255, 0.03)', 
+                  background: '#f8fafc', 
+                  border: '1px solid var(--border-color)',
                   borderRadius: '10px',
                   marginBottom: '1.25rem',
                   textAlign: 'center',
@@ -408,15 +409,15 @@ export default function ExamManagementPage() {
                 }}>
                   <div>
                     <div style={{ color: 'var(--text-muted)' }}>Duration</div>
-                    <strong style={{ color: '#ffffff', fontSize: '0.9rem' }}>{exam.duration_minutes} min</strong>
+                    <strong style={{ color: 'var(--text-primary)', fontSize: '0.9rem' }}>{exam.duration_minutes} min</strong>
                   </div>
                   <div>
                     <div style={{ color: 'var(--text-muted)' }}>Questions</div>
-                    <strong style={{ color: '#ffffff', fontSize: '0.9rem' }}>{exam.questions_count}</strong>
+                    <strong style={{ color: 'var(--text-primary)', fontSize: '0.9rem' }}>{exam.questions_count}</strong>
                   </div>
                   <div>
                     <div style={{ color: 'var(--text-muted)' }}>Pass / Total</div>
-                    <strong style={{ color: '#34d399', fontSize: '0.9rem' }}>{exam.passing_marks}/{exam.total_marks}</strong>
+                    <strong style={{ color: '#059669', fontSize: '0.9rem' }}>{exam.passing_marks}/{exam.total_marks}</strong>
                   </div>
                 </div>
 

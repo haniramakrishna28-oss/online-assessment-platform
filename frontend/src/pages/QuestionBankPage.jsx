@@ -105,6 +105,21 @@ export default function QuestionBankPage() {
     fetchQuestions();
   };
 
+  const handleClearFilters = () => {
+    setSearch('');
+    setSelectedSubject('ALL');
+    setSelectedDifficulty('ALL');
+    setSelectedType('ALL');
+    setLoading(true);
+    setError(null);
+    api.get('/questions/')
+      .then(res => setQuestions(res.data))
+      .catch(err => setError(err.response?.data?.detail || 'Failed to load questions.'))
+      .finally(() => setLoading(false));
+  };
+
+  const hasActiveFilters = search.trim() !== '' || selectedSubject !== 'ALL' || selectedDifficulty !== 'ALL' || selectedType !== 'ALL';
+
   const toggleExpand = (id) => {
     setExpandedQuestions(prev => ({ ...prev, [id]: !prev[id] }));
   };
@@ -333,7 +348,7 @@ export default function QuestionBankPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
             <div className="glass-card" style={{ padding: '1.25rem' }}>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Total Questions</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ffffff' }}>{stats.total_questions}</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>{stats.total_questions}</div>
             </div>
             <div className="glass-card" style={{ padding: '1.25rem' }}>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Easy / Medium / Hard</div>
@@ -344,12 +359,12 @@ export default function QuestionBankPage() {
             <div className="glass-card" style={{ padding: '1.25rem' }}>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Question Types</div>
               <div style={{ fontSize: '1.2rem', fontWeight: 700, marginTop: '4px' }}>
-                <span style={{ color: '#818cf8' }}>{stats.mcq} MCQ</span> • <span style={{ color: '#38bdf8' }}>{stats.tf} True/False</span>
+                <span style={{ color: 'var(--primary)' }}>{stats.mcq} MCQ</span> • <span style={{ color: 'var(--info)' }}>{stats.tf} True/False</span>
               </div>
             </div>
             <div className="glass-card" style={{ padding: '1.25rem' }}>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Distinct Subjects</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-secondary)' }}>{stats.subjects_count}</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--primary)' }}>{stats.subjects_count}</div>
             </div>
           </div>
         )}
@@ -370,9 +385,9 @@ export default function QuestionBankPage() {
                   width: '100%',
                   padding: '0.65rem 1rem 0.65rem 2.4rem',
                   borderRadius: '10px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid var(--border-subtle)',
-                  color: '#ffffff',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.9rem',
                   outline: 'none',
                   fontFamily: 'inherit'
@@ -390,9 +405,9 @@ export default function QuestionBankPage() {
                   width: '100%',
                   padding: '0.65rem 1rem',
                   borderRadius: '10px',
-                  background: 'var(--bg-secondary)',
-                  border: '1px solid var(--border-subtle)',
-                  color: '#ffffff',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.88rem',
                   outline: 'none',
                   cursor: 'pointer'
@@ -415,9 +430,9 @@ export default function QuestionBankPage() {
                   width: '100%',
                   padding: '0.65rem 1rem',
                   borderRadius: '10px',
-                  background: 'var(--bg-secondary)',
-                  border: '1px solid var(--border-subtle)',
-                  color: '#ffffff',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.88rem',
                   outline: 'none',
                   cursor: 'pointer'
@@ -440,9 +455,9 @@ export default function QuestionBankPage() {
                   width: '100%',
                   padding: '0.65rem 1rem',
                   borderRadius: '10px',
-                  background: 'var(--bg-secondary)',
-                  border: '1px solid var(--border-subtle)',
-                  color: '#ffffff',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.88rem',
                   outline: 'none',
                   cursor: 'pointer'
@@ -454,38 +469,57 @@ export default function QuestionBankPage() {
               </select>
             </div>
 
-            <button
-              id="search-submit-btn"
-              type="submit"
-              className="btn btn-secondary"
-              style={{ padding: '0.65rem 1.15rem' }}
-            >
-              Filter
-            </button>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <button
+                id="search-submit-btn"
+                type="submit"
+                className="btn btn-primary"
+                style={{ padding: '0.65rem 1.15rem' }}
+              >
+                <Filter size={15} /> Filter
+              </button>
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={handleClearFilters}
+                  className="btn btn-secondary"
+                  style={{ padding: '0.65rem 1rem', fontSize: '0.85rem' }}
+                >
+                  <X size={15} /> Clear
+                </button>
+              )}
+            </div>
           </form>
         </div>
 
         {/* Questions Listing */}
         {loading ? (
           <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
-            <Loader2 size={36} className="animate-spin" style={{ color: 'var(--accent-primary)', margin: '0 auto 1rem auto' }} />
+            <Loader2 size={36} className="animate-spin" style={{ color: 'var(--primary)', margin: '0 auto 1rem auto' }} />
             <p>Loading questions from PostgreSQL...</p>
           </div>
         ) : error ? (
-          <div style={{ padding: '1.5rem', background: 'var(--danger-bg)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '12px', color: '#fca5a5' }}>
+          <div style={{ padding: '1.5rem', background: 'var(--danger-bg)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '12px', color: '#b91c1c' }}>
             <AlertCircle size={20} style={{ marginBottom: '0.5rem', color: 'var(--danger)' }} />
             <div>{error}</div>
           </div>
         ) : questions.length === 0 ? (
           <div className="glass-card" style={{ textAlign: 'center', padding: '3rem 2rem' }}>
             <HelpCircle size={48} style={{ color: 'var(--text-muted)', margin: '0 auto 1rem auto' }} />
-            <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>No questions found</h3>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>No questions found</h3>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', maxWidth: '450px', margin: '0 auto 1.5rem auto' }}>
               No questions matched your search or filter criteria. You can create a new question or clear the filters.
             </p>
-            <button onClick={openCreateModal} className="btn btn-primary">
-              <Plus size={16} /> Add First Question
-            </button>
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              {hasActiveFilters && (
+                <button onClick={handleClearFilters} className="btn btn-secondary">
+                  <X size={16} /> Reset Filters
+                </button>
+              )}
+              <button onClick={openCreateModal} className="btn btn-primary">
+                <Plus size={16} /> Add First Question
+              </button>
+            </div>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -496,8 +530,8 @@ export default function QuestionBankPage() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.75rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                       <span style={{ 
-                        background: 'rgba(99, 102, 241, 0.15)', 
-                        color: '#818cf8', 
+                        background: 'var(--primary-light)', 
+                        color: 'var(--primary-dark)', 
                         padding: '3px 9px', 
                         borderRadius: '6px', 
                         fontSize: '0.75rem', 
@@ -527,7 +561,7 @@ export default function QuestionBankPage() {
                       <button
                         onClick={() => handleDelete(q.id)}
                         className="btn btn-secondary"
-                        style={{ padding: '0.35rem 0.65rem', fontSize: '0.8rem', borderColor: 'rgba(239, 68, 68, 0.3)', color: '#fca5a5' }}
+                        style={{ padding: '0.35rem 0.65rem', fontSize: '0.8rem', borderColor: 'rgba(239, 68, 68, 0.3)', color: '#dc2626' }}
                         title="Delete question"
                       >
                         <Trash2 size={14} />
@@ -536,7 +570,7 @@ export default function QuestionBankPage() {
                   </div>
 
                   {/* Question Text */}
-                  <div style={{ fontSize: '1.05rem', fontWeight: 600, color: '#ffffff', marginBottom: '0.85rem' }}>
+                  <div style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.85rem' }}>
                     {q.question_text}
                   </div>
 
@@ -547,7 +581,7 @@ export default function QuestionBankPage() {
                       style={{
                         background: 'none',
                         border: 'none',
-                        color: 'var(--accent-primary)',
+                        color: 'var(--primary)',
                         fontSize: '0.82rem',
                         fontWeight: 600,
                         cursor: 'pointer',
@@ -569,16 +603,16 @@ export default function QuestionBankPage() {
                             style={{
                               padding: '0.65rem 0.85rem',
                               borderRadius: '8px',
-                              background: opt.is_correct ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 255, 255, 0.03)',
-                              border: opt.is_correct ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid var(--border-subtle)',
+                              background: opt.is_correct ? 'var(--success-bg)' : '#f8fafc',
+                              border: opt.is_correct ? '1px solid var(--success-border)' : '1px solid var(--border-color)',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'space-between',
                               fontSize: '0.85rem'
                             }}
                           >
-                            <span style={{ color: opt.is_correct ? '#6ee7b7' : 'var(--text-secondary)' }}>
-                              <strong style={{ color: opt.is_correct ? '#10b981' : 'var(--text-muted)', marginRight: '6px' }}>
+                            <span style={{ color: opt.is_correct ? '#065f46' : 'var(--text-primary)' }}>
+                              <strong style={{ color: opt.is_correct ? '#059669' : 'var(--text-secondary)', marginRight: '6px' }}>
                                 {String.fromCharCode(65 + idx)}.
                               </strong>
                               {opt.option_text}
@@ -604,7 +638,7 @@ export default function QuestionBankPage() {
           <div style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(0, 0, 0, 0.75)',
+            background: 'rgba(15, 23, 42, 0.6)',
             backdropFilter: 'blur(8px)',
             display: 'flex',
             alignItems: 'center',
@@ -619,11 +653,13 @@ export default function QuestionBankPage() {
               overflowY: 'auto',
               padding: '2rem',
               borderRadius: '20px',
-              border: '1px solid rgba(99, 102, 241, 0.3)'
+              background: '#ffffff',
+              border: '1px solid var(--border-color)',
+              boxShadow: 'var(--shadow-lg)'
             }}>
               {/* Modal Header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 800 }}>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                   {modalMode === 'create' ? 'Add New Question' : 'Edit Question'}
                 </h2>
                 <button
@@ -637,14 +673,14 @@ export default function QuestionBankPage() {
               {modalError && (
                 <div style={{
                   background: 'var(--danger-bg)',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  border: '1px solid var(--danger-border)',
                   borderRadius: '10px',
                   padding: '0.75rem 1rem',
                   marginBottom: '1.25rem',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.65rem',
-                  color: '#fca5a5',
+                  color: '#b91c1c',
                   fontSize: '0.85rem'
                 }}>
                   <AlertCircle size={17} style={{ color: 'var(--danger)', flexShrink: 0 }} />
@@ -672,9 +708,9 @@ export default function QuestionBankPage() {
                         width: '100%',
                         padding: '0.7rem 1rem',
                         borderRadius: '10px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid var(--border-subtle)',
-                        color: '#ffffff',
+                        background: '#ffffff',
+                        border: '1px solid var(--border-color)',
+                        color: 'var(--text-primary)',
                         fontSize: '0.9rem',
                         outline: 'none',
                         fontFamily: 'inherit'
@@ -702,9 +738,9 @@ export default function QuestionBankPage() {
                         width: '100%',
                         padding: '0.7rem 1rem',
                         borderRadius: '10px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid var(--border-subtle)',
-                        color: '#ffffff',
+                        background: '#ffffff',
+                        border: '1px solid var(--border-color)',
+                        color: 'var(--text-primary)',
                         fontSize: '0.9rem',
                         outline: 'none',
                         fontFamily: 'inherit'
@@ -727,9 +763,9 @@ export default function QuestionBankPage() {
                           flex: 1,
                           padding: '0.6rem',
                           borderRadius: '8px',
-                          border: formData.question_type === 'MCQ' ? '1px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
-                          background: formData.question_type === 'MCQ' ? 'rgba(99, 102, 241, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-                          color: formData.question_type === 'MCQ' ? '#818cf8' : 'var(--text-secondary)',
+                          border: formData.question_type === 'MCQ' ? '2px solid var(--primary)' : '1px solid var(--border-color)',
+                          background: formData.question_type === 'MCQ' ? 'var(--primary-light)' : '#f8fafc',
+                          color: formData.question_type === 'MCQ' ? 'var(--primary-dark)' : 'var(--text-secondary)',
                           fontSize: '0.85rem',
                           fontWeight: 600,
                           cursor: 'pointer'
@@ -744,9 +780,9 @@ export default function QuestionBankPage() {
                           flex: 1,
                           padding: '0.6rem',
                           borderRadius: '8px',
-                          border: formData.question_type === 'TF' ? '1px solid #38bdf8' : '1px solid var(--border-subtle)',
-                          background: formData.question_type === 'TF' ? 'rgba(56, 189, 248, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-                          color: formData.question_type === 'TF' ? '#38bdf8' : 'var(--text-secondary)',
+                          border: formData.question_type === 'TF' ? '2px solid var(--info)' : '1px solid var(--border-color)',
+                          background: formData.question_type === 'TF' ? 'var(--info-bg)' : '#f8fafc',
+                          color: formData.question_type === 'TF' ? 'var(--info)' : 'var(--text-secondary)',
                           fontSize: '0.85rem',
                           fontWeight: 600,
                           cursor: 'pointer'
@@ -771,9 +807,9 @@ export default function QuestionBankPage() {
                             flex: 1,
                             padding: '0.6rem',
                             borderRadius: '8px',
-                            border: formData.difficulty === diff ? '1px solid #ffffff' : '1px solid var(--border-subtle)',
-                            background: formData.difficulty === diff ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-                            color: formData.difficulty === diff ? '#ffffff' : 'var(--text-muted)',
+                            border: formData.difficulty === diff ? '2px solid var(--primary)' : '1px solid var(--border-color)',
+                            background: formData.difficulty === diff ? 'var(--primary-light)' : '#f8fafc',
+                            color: formData.difficulty === diff ? 'var(--primary-dark)' : 'var(--text-secondary)',
                             fontSize: '0.8rem',
                             fontWeight: 600,
                             cursor: 'pointer'
@@ -802,9 +838,9 @@ export default function QuestionBankPage() {
                       width: '100%',
                       padding: '0.75rem 1rem',
                       borderRadius: '10px',
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      border: '1px solid var(--border-subtle)',
-                      color: '#ffffff',
+                      background: '#ffffff',
+                      border: '1px solid var(--border-color)',
+                      color: 'var(--text-primary)',
                       fontSize: '0.9rem',
                       outline: 'none',
                       fontFamily: 'inherit',
@@ -832,10 +868,10 @@ export default function QuestionBankPage() {
                           display: 'flex', 
                           alignItems: 'center', 
                           gap: '0.65rem',
-                          background: opt.is_correct ? 'rgba(16, 185, 129, 0.08)' : 'rgba(255, 255, 255, 0.02)',
+                          background: opt.is_correct ? 'var(--success-bg)' : '#f8fafc',
                           padding: '0.4rem 0.65rem',
                           borderRadius: '10px',
-                          border: opt.is_correct ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border-subtle)'
+                          border: opt.is_correct ? '1px solid var(--success-border)' : '1px solid var(--border-color)'
                         }}
                       >
                         <input
@@ -846,7 +882,7 @@ export default function QuestionBankPage() {
                           title="Mark this option as correct"
                           style={{ cursor: 'pointer', accentColor: '#10b981', width: '18px', height: '18px' }}
                         />
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: opt.is_correct ? '#10b981' : 'var(--text-muted)' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: opt.is_correct ? '#059669' : 'var(--text-secondary)' }}>
                           {String.fromCharCode(65 + i)}
                         </span>
                         <input
@@ -859,9 +895,9 @@ export default function QuestionBankPage() {
                             flexGrow: 1,
                             padding: '0.55rem 0.85rem',
                             borderRadius: '8px',
-                            background: 'rgba(255, 255, 255, 0.04)',
-                            border: '1px solid var(--border-subtle)',
-                            color: '#ffffff',
+                            background: '#ffffff',
+                            border: '1px solid var(--border-color)',
+                            color: 'var(--text-primary)',
                             fontSize: '0.88rem',
                             outline: 'none',
                             fontFamily: 'inherit'
@@ -888,11 +924,11 @@ export default function QuestionBankPage() {
                       style={{
                         marginTop: '0.65rem',
                         background: 'none',
-                        border: '1px dashed var(--border-subtle)',
+                        border: '1px dashed var(--border-color)',
                         borderRadius: '8px',
                         padding: '0.5rem',
                         width: '100%',
-                        color: 'var(--accent-primary)',
+                        color: 'var(--primary)',
                         fontSize: '0.82rem',
                         cursor: 'pointer',
                         display: 'flex',
